@@ -27,10 +27,35 @@ locations = [
     {'Highway' : 'M6Toll', 'Id': '9249', 'Site' : '7682/1' },
     {'Highway' : 'M6Toll', 'Id': '9250', 'Site' : '7682/2' }    
 ]
+
+locations2 = [
+    {'Highway' : 'M6', 'Site' : 'M6/5686A' },
+    {'Highway' : 'M6', 'Site' : 'M6/5686B' },
+    {'Highway' : 'M6', 'Site' : 'M6/5689B' },
+    {'Highway' : 'M6', 'Site' : 'M6/5690A' },
+    {'Highway' : 'M6', 'Site' : 'M6/5692A' },
+    {'Highway' : 'M6', 'Site' : 'M6/5697A' },
+    {'Highway' : 'M6', 'Site' : 'M6/5697B' },
+    {'Highway' : 'M6', 'Site' : 'M6/5697J' },
+    {'Highway' : 'M6', 'Site' : 'M6/5701A' },
+    {'Highway' : 'M6', 'Site' : 'M6/5701B' },
+    {'Highway' : 'M6', 'Site' : 'M6/5701M' },
+    {'Highway' : 'M6', 'Site' : 'M6/5701J' },
+    {'Highway' : 'M6', 'Site' : 'M6/5704A' },
+    {'Highway' : 'M6', 'Site' : 'M6/5701J' },
+    {'Highway' : 'M6', 'Site' : 'M6/5707A' },
+    {'Highway' : 'M6', 'Site' : 'M6/5707B' },
+    {'Highway' : 'M6', 'Site' : 'M6/5707K' },
+
+
+]
+
+
 StartDate = '01012025'
 EndDate = '30042025'
 PageSize = 39990 # Hay 96 intervalos de 15 minutos en un día, con lo que 39990 intervalos cubren desde el 1 de enero de 2025 hasta el 31 de marzo de 2025
 
+# Función para obtener los datos de tráfico
 def get_traffic_data(Id):
     url = f'https://webtris.nationalhighways.co.uk/api/v1.0/reports/daily?sites={Id}&start_date={StartDate}&end_date={EndDate}&page=1&page_size={PageSize}'
     response = requests.get(url)
@@ -40,6 +65,7 @@ def get_traffic_data(Id):
         print(f"Error: {response.status_code}")
         return None
 
+# Función para obtener los datos de calidad
 def get_quality_traffic_data(Id):
     url = f'https://webtris.nationalhighways.co.uk/api/v1.0/quality/daily?siteid={Id}&start_date={StartDate}&end_date={EndDate}'
     response = requests.get(url)
@@ -48,6 +74,33 @@ def get_quality_traffic_data(Id):
     else:
         print(f"Error: {response.status_code}")
         return None
+
+def get_Id_M6(Site):
+    url = 'https://webtris.nationalhighways.co.uk/api/v1.0/sites'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        if 'sites' in data:
+            for row in data['sites']:
+                desc = row.get('Description', '').strip().upper()
+                site = Site.strip().upper()
+                if desc == site:
+                    return row.get('Id')
+        else:
+            print("No 'Sites' key in API response!")
+            #print("Full API response:", data)  # <-- Add this line
+    else:
+        print(f"Error: {response.status_code}")
+    return None
+
+# Append Ids to locations2
+for location in locations2:
+    site_name = location['Site']
+    site_id = get_Id_M6(site_name)
+    location['Id'] = site_id  # Append the Id to the data list
+    
+
+print(locations2)  # Now each dict in locations2 has 'Id'
 
 # Lista para almacenar los datos
 data=[]
@@ -104,6 +157,7 @@ for location in locations:
         print(f"No data found for {location['Site']} with Id {Id}")
     
     """
+    Este codigo es el antiguo para extraer los datos de calidad, esta aquí por si se necesita
     if quality_data and 'Qualities' in quality_data:
         # Extraer los datos de calidad
         for row in quality_data['Qualities']:
