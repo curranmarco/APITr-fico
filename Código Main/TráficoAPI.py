@@ -39,12 +39,36 @@ def get_traffic_data(Id):
     else:
         print(f"Error: {response.status_code}")
         return None
-    
+
+def get_quality_traffic_data(Id):
+    url = f'https://webtris.nationalhighways.co.uk/api/v1.0/quality/daily?siteid={Id}&start_date={StartDate}&end_date={EndDate}'
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Error: {response.status_code}")
+        return None
+
+# Lista para almacenar los datos
 data=[]
 for location in locations:
     # Construir la URL para cada ubicación
     Id = location['Id']
     traffic_data = get_traffic_data(Id)
+    quality_data = get_quality_traffic_data(Id)
+
+    # Crear un diccionario para almacenar los datos de calidad por fecha
+    qualitybyDate = {}
+    # Verificar si se obtuvo la respuesta y si contiene datos
+    if quality_data and 'Qualities' in quality_data:
+        for q in quality_data['Qualities']:
+            # Extraer los datos de calidad
+            date = q.get('Date', '')[:10]
+            qualitybyDate[date] = q.get('Quality', '')
+    else:
+        print(f"No quality data found for {location['Site']} with Id {Id}")
+
+
     #print(traffic_data)
     # Verificar si se obtuvo la respuesta y si contiene datos
     if traffic_data and 'Rows' in traffic_data:
@@ -58,6 +82,7 @@ for location in locations:
             Cars521660 = row.get('521 - 660 cm')
             Cars6611160 = row.get('661 - 1160 cm')
             Cars1161 = row.get('1160+ cm') 
+            quality = qualitybyDate.get(Date[:10] if Date else None)
             # Agregar los datos a la lista
             data.append({
                 'Highway': location['Highway'],
@@ -70,12 +95,25 @@ for location in locations:
                 'Cars 661 - 1160 cm': Cars6611160,
                 'Cars 1160+ cm': Cars1161,
                 'AverageSpeed': AverageSpeed,
-                'TotalTraffic': TotalTraffic
+                'TotalTraffic': TotalTraffic,
+                'Quality': quality
             })
 
         #print(data)
     else:
         print(f"No data found for {location['Site']} with Id {Id}")
+    
+    """
+    if quality_data and 'Qualities' in quality_data:
+        # Extraer los datos de calidad
+        for row in quality_data['Qualities']:
+            Quality = row.get('Quality')
+            data.append({
+                'Quality' : Quality
+            })
+    else :
+        print(f"No quality data found for {location['Site']} with Id {Id}")   
+    """        
     
 # Convertir la lista de datos a un DataFrame de pandas
 df = pd.DataFrame(data)
