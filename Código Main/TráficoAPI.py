@@ -29,7 +29,7 @@ locations = [
 ]
 StartDate = '01012025'
 EndDate = '30042025'
-PageSize = 96 # Hay 96 intervalos de 15 minutos en un día
+PageSize = 39990 # Hay 96 intervalos de 15 minutos en un día
 
 def get_traffic_data(Id):
     url = f'https://webtris.nationalhighways.co.uk/api/v1.0/reports/daily?sites={Id}&start_date={StartDate}&end_date={EndDate}&page=1&page_size={PageSize}'
@@ -50,6 +50,7 @@ for location in locations:
     if traffic_data and 'Rows' in traffic_data:
         # Extraer los datos que nos interesan
         for row in traffic_data['Rows']:
+            Date = row.get('Report Date')
             TimeInterval = row.get('Time Interval')
             AverageSpeed = row.get('Avg mph')
             TotalTraffic = row.get('Total Volume')
@@ -58,6 +59,7 @@ for location in locations:
                 'Highway': location['Highway'],
                 'Id': location['Id'],
                 'Site': location['Site'],
+                'Date': Date,
                 'TimeInterval': TimeInterval,
                 'AverageSpeed': AverageSpeed,
                 'TotalTraffic': TotalTraffic
