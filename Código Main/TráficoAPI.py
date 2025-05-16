@@ -29,7 +29,7 @@ locations = [
 ]
 StartDate = '01012025'
 EndDate = '30042025'
-PageSize = 39990 # Hay 96 intervalos de 15 minutos en un día
+PageSize = 39990 # Hay 96 intervalos de 15 minutos en un día, con lo que 39990 intervalos cubren desde el 1 de enero de 2025 hasta el 31 de marzo de 2025
 
 def get_traffic_data(Id):
     url = f'https://webtris.nationalhighways.co.uk/api/v1.0/reports/daily?sites={Id}&start_date={StartDate}&end_date={EndDate}&page=1&page_size={PageSize}'
@@ -54,6 +54,10 @@ for location in locations:
             TimeInterval = row.get('Time Interval')
             AverageSpeed = row.get('Avg mph')
             TotalTraffic = row.get('Total Volume')
+            Cars0520 = row.get('0 - 520 cm')
+            Cars521660 = row.get('521 - 660 cm')
+            Cars6611160 = row.get('661 - 1160 cm')
+            Cars1161 = row.get('1160+ cm') 
             # Agregar los datos a la lista
             data.append({
                 'Highway': location['Highway'],
@@ -61,6 +65,10 @@ for location in locations:
                 'Site': location['Site'],
                 'Date': Date,
                 'TimeInterval': TimeInterval,
+                'Cars 0 - 520 cm': Cars0520,
+                'Cars 521 - 660 cm': Cars521660,
+                'Cars 661 - 1160 cm': Cars6611160,
+                'Cars 1160+ cm': Cars1161,
                 'AverageSpeed': AverageSpeed,
                 'TotalTraffic': TotalTraffic
             })
