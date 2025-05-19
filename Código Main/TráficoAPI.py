@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 
 
+# Lista de locations de la M6Toll alrededor de Birmingham
 locations = [
     {'Highway' : 'M6Toll', 'Id': '9228', 'Site' : '7671/1' },
     {'Highway' : 'M6Toll', 'Id': '9229', 'Site' : '7671/2' },
@@ -28,6 +29,7 @@ locations = [
     {'Highway' : 'M6Toll', 'Id': '9250', 'Site' : '7682/2' }    
 ]
 
+# Lista de locationsde la M6 que pasa por dentro de Birmingham
 locations2 = [
     {'Highway' : 'M6', 'Site' : 'M6/5686A' },
     {'Highway' : 'M6', 'Site' : 'M6/5686B' },
@@ -295,6 +297,7 @@ locations2 = [
     {'Highway' : 'M6', 'Site' : 'M6/6086B' }
 ]
 
+# Lista de locations desde que se juntan la M6 y la M6Toll hacia el norte
 locations3 = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6089A' },
     {'Highway' : 'M6 North', 'Site' : 'M600/1516B'},
@@ -384,7 +387,7 @@ locations3 = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6241A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6241B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6245A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6245B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6245B' }
 
 ]
 
@@ -445,6 +448,12 @@ for location in locations2:
     
 # Verificar que se han añadido los Ids correctamente
 #print(locations2)  
+
+# Apendar los Ids a la lista locations3
+for location in locations3:
+    site_name = location['Site']
+    site_id = get_Id_M6(site_name)
+    location['Id'] = site_id  
 
 # Lista para almacenar los datos
 data=[]
@@ -515,6 +524,55 @@ for location in locations:
     """    
    
 for location in locations2:
+    # Construir la URL para cada ubicación
+    Id = location['Id']
+    traffic_data = get_traffic_data(Id)
+    quality_data = get_quality_traffic_data(Id)
+
+    # Crear un diccionario para almacenar los datos de calidad por fecha
+    qualitybyDate = {}
+    # Verificar si se obtuvo la respuesta y si contiene datos
+    if quality_data and 'Qualities' in quality_data:
+        for q in quality_data['Qualities']:
+            # Extraer los datos de calidad
+            date = q.get('Date', '')[:10]
+            qualitybyDate[date] = q.get('Quality', '')
+    else:
+        print(f"No quality data found for {location['Site']} with Id {Id}")
+    # Verificar si se obtuvo la respuesta y si contiene datos
+    if traffic_data and 'Rows' in traffic_data:
+        # Extraer los datos que nos interesan
+        for row in traffic_data['Rows']:
+            Date = row.get('Report Date')
+            TimeInterval = row.get('Time Interval')
+            AverageSpeed = row.get('Avg mph')
+            TotalTraffic = row.get('Total Volume')
+            Cars0520 = row.get('0 - 520 cm')
+            Cars521660 = row.get('521 - 660 cm')
+            Cars6611160 = row.get('661 - 1160 cm')
+            Cars1161 = row.get('1160+ cm') 
+            quality = qualitybyDate.get(Date[:10] if Date else None)
+            # Agregar los datos a la lista
+            data.append({
+                'Highway': location['Highway'],
+                'Id': location['Id'],
+                'Site': location['Site'],
+                'Date': Date,
+                'TimeInterval': TimeInterval,
+                'Cars 0 - 520 cm': Cars0520,
+                'Cars 521 - 660 cm': Cars521660,
+                'Cars 661 - 1160 cm': Cars6611160,
+                'Cars 1160+ cm': Cars1161,
+                'AverageSpeed': AverageSpeed,
+                'TotalTraffic': TotalTraffic,
+                'Quality': quality
+            })
+
+        #print(data)
+    else:
+        print(f"No data found for {location['Site']} with Id {Id}")
+    
+for location in locations3:
     # Construir la URL para cada ubicación
     Id = location['Id']
     traffic_data = get_traffic_data(Id)
