@@ -2,35 +2,32 @@ import pandas as pd
 import requests
 
 
-# Lista de locations de la M6Toll alrededor de Birmingham
-locations = [
-    {'Highway' : 'M6Toll', 'Id': '9228', 'Site' : '7671/1' },
-    {'Highway' : 'M6Toll', 'Id': '9229', 'Site' : '7671/2' },
-    {'Highway' : 'M6Toll', 'Id': '9230', 'Site' : '7672/1' },
-    {'Highway' : 'M6Toll', 'Id': '9231', 'Site' : '7672/2' },
-    {'Highway' : 'M6Toll', 'Id': '9232', 'Site' : '7673/1' },
-    {'Highway' : 'M6Toll', 'Id': '9233', 'Site' : '7673/2' },
-    {'Highway' : 'M6Toll', 'Id': '9234', 'Site' : '7674/1' },
-    {'Highway' : 'M6Toll', 'Id': '9235', 'Site' : '7674/2' },
-    {'Highway' : 'M6Toll', 'Id': '9236', 'Site' : '7675/1' },
-    {'Highway' : 'M6Toll', 'Id': '9237', 'Site' : '7675/2' },
-    {'Highway' : 'M6Toll', 'Id': '9238', 'Site' : '7676/1' },
-    {'Highway' : 'M6Toll', 'Id': '9239', 'Site' : '7676/2' },
-    {'Highway' : 'M6Toll', 'Id': '9240', 'Site' : '7677/1' },
-    {'Highway' : 'M6Toll', 'Id': '9241', 'Site' : '7678/1' },
-    {'Highway' : 'M6Toll', 'Id': '9242', 'Site' : '7678/2' },
-    {'Highway' : 'M6Toll', 'Id': '9243', 'Site' : '7679/1' },
-    {'Highway' : 'M6Toll', 'Id': '9244', 'Site' : '7679/2' },
-    {'Highway' : 'M6Toll', 'Id': '9245', 'Site' : '7680/1' },
-    {'Highway' : 'M6Toll', 'Id': '9246', 'Site' : '7680/2' },
-    {'Highway' : 'M6Toll', 'Id': '9247', 'Site' : '7681/1' },
-    {'Highway' : 'M6Toll', 'Id': '9248', 'Site' : '7681/2' },
-    {'Highway' : 'M6Toll', 'Id': '9249', 'Site' : '7682/1' },
-    {'Highway' : 'M6Toll', 'Id': '9250', 'Site' : '7682/2' }    
-]
 
-# Lista de locationsde la M6 que pasa por dentro de Birmingham
-locations2 = [
+# Lista de locationsde la M6Toll y la M6 que pasa por dentro de Birmingham
+locations = [
+    {'Highway' : 'M6Toll', 'Site' : '7671/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7671/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7672/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7672/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7673/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7673/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7674/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7674/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7675/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7675/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7676/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7676/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7677/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7678/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7678/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7679/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7679/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7680/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7680/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7681/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7681/2' },
+    {'Highway' : 'M6Toll', 'Site' : '7682/1' },
+    {'Highway' : 'M6Toll', 'Site' : '7682/2' }  
     {'Highway' : 'M6', 'Site' : 'M6/5686A' },
     {'Highway' : 'M6', 'Site' : 'M6/5686B' },
     {'Highway' : 'M6', 'Site' : 'M6/5689B' },
@@ -294,11 +291,7 @@ locations2 = [
     {'Highway' : 'M6', 'Site' : 'M6/6085A' },
     {'Highway' : 'M6', 'Site' : 'M6/6081B' },
     {'Highway' : 'M6', 'Site' : 'M6/6085K' },
-    {'Highway' : 'M6', 'Site' : 'M6/6086B' }
-]
-
-# Lista de locations desde que se juntan la M6 y la M6Toll hacia el norte
-locations3 = [
+    {'Highway' : 'M6', 'Site' : 'M6/6086B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6089A' },
     {'Highway' : 'M6 North', 'Site' : 'M600/1516B'},
     {'Highway' : 'M6 North', 'Site' : 'M6/6092B' },
@@ -357,25 +350,15 @@ locations3 = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6191B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6195A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6195B' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6196J' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6196M' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6197A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6197B' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6200A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6200B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6200K' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6201L' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6206A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6206B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6209A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6209B' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6214A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6214B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6216B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6220A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6220B' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6223A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6223B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6226A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6226B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6231A' },
@@ -385,12 +368,12 @@ locations3 = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6238A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6238B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6241A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6241B' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6245A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6245B' }
+    {'Highway' : 'M6 North', 'Site' : 'M6/6241B' }
 
 ]
 
+# Lista de locations desde que se juntan la M6 y la M6Toll hacia el norte
+# TODO Terminar lista de locations de la M6 hacia el norte 
 
 StartDate = '01012025'
 EndDate = '30042025'
@@ -441,19 +424,13 @@ def get_Id_M6(Site):
     return None
 
 # Apendar los Ids a la lista locations2
-for location in locations2:
+for location in locations:
     site_name = location['Site']
     site_id = get_Id_M6(site_name)
     location['Id'] = site_id  
     
 # Verificar que se han añadido los Ids correctamente
 #print(locations2)  
-
-# Apendar los Ids a la lista locations3
-for location in locations3:
-    site_name = location['Site']
-    site_id = get_Id_M6(site_name)
-    location['Id'] = site_id  
 
 # Lista para almacenar los datos
 data=[]
@@ -522,105 +499,6 @@ for location in locations:
         print(f"No quality data found for {location['Site']} with Id {Id}") 
 
     """    
-   
-for location in locations2:
-    # Construir la URL para cada ubicación
-    Id = location['Id']
-    traffic_data = get_traffic_data(Id)
-    quality_data = get_quality_traffic_data(Id)
-
-    # Crear un diccionario para almacenar los datos de calidad por fecha
-    qualitybyDate = {}
-    # Verificar si se obtuvo la respuesta y si contiene datos
-    if quality_data and 'Qualities' in quality_data:
-        for q in quality_data['Qualities']:
-            # Extraer los datos de calidad
-            date = q.get('Date', '')[:10]
-            qualitybyDate[date] = q.get('Quality', '')
-    else:
-        print(f"No quality data found for {location['Site']} with Id {Id}")
-    # Verificar si se obtuvo la respuesta y si contiene datos
-    if traffic_data and 'Rows' in traffic_data:
-        # Extraer los datos que nos interesan
-        for row in traffic_data['Rows']:
-            Date = row.get('Report Date')
-            TimeInterval = row.get('Time Interval')
-            AverageSpeed = row.get('Avg mph')
-            TotalTraffic = row.get('Total Volume')
-            Cars0520 = row.get('0 - 520 cm')
-            Cars521660 = row.get('521 - 660 cm')
-            Cars6611160 = row.get('661 - 1160 cm')
-            Cars1161 = row.get('1160+ cm') 
-            quality = qualitybyDate.get(Date[:10] if Date else None)
-            # Agregar los datos a la lista
-            data.append({
-                'Highway': location['Highway'],
-                'Id': location['Id'],
-                'Site': location['Site'],
-                'Date': Date,
-                'TimeInterval': TimeInterval,
-                'Cars 0 - 520 cm': Cars0520,
-                'Cars 521 - 660 cm': Cars521660,
-                'Cars 661 - 1160 cm': Cars6611160,
-                'Cars 1160+ cm': Cars1161,
-                'AverageSpeed': AverageSpeed,
-                'TotalTraffic': TotalTraffic,
-                'Quality': quality
-            })
-
-        #print(data)
-    else:
-        print(f"No data found for {location['Site']} with Id {Id}")
-    
-for location in locations3:
-    # Construir la URL para cada ubicación
-    Id = location['Id']
-    traffic_data = get_traffic_data(Id)
-    quality_data = get_quality_traffic_data(Id)
-
-    # Crear un diccionario para almacenar los datos de calidad por fecha
-    qualitybyDate = {}
-    # Verificar si se obtuvo la respuesta y si contiene datos
-    if quality_data and 'Qualities' in quality_data:
-        for q in quality_data['Qualities']:
-            # Extraer los datos de calidad
-            date = q.get('Date', '')[:10]
-            qualitybyDate[date] = q.get('Quality', '')
-    else:
-        print(f"No quality data found for {location['Site']} with Id {Id}")
-    # Verificar si se obtuvo la respuesta y si contiene datos
-    if traffic_data and 'Rows' in traffic_data:
-        # Extraer los datos que nos interesan
-        for row in traffic_data['Rows']:
-            Date = row.get('Report Date')
-            TimeInterval = row.get('Time Interval')
-            AverageSpeed = row.get('Avg mph')
-            TotalTraffic = row.get('Total Volume')
-            Cars0520 = row.get('0 - 520 cm')
-            Cars521660 = row.get('521 - 660 cm')
-            Cars6611160 = row.get('661 - 1160 cm')
-            Cars1161 = row.get('1160+ cm') 
-            quality = qualitybyDate.get(Date[:10] if Date else None)
-            # Agregar los datos a la lista
-            data.append({
-                'Highway': location['Highway'],
-                'Id': location['Id'],
-                'Site': location['Site'],
-                'Date': Date,
-                'TimeInterval': TimeInterval,
-                'Cars 0 - 520 cm': Cars0520,
-                'Cars 521 - 660 cm': Cars521660,
-                'Cars 661 - 1160 cm': Cars6611160,
-                'Cars 1160+ cm': Cars1161,
-                'AverageSpeed': AverageSpeed,
-                'TotalTraffic': TotalTraffic,
-                'Quality': quality
-            })
-
-        #print(data)
-    else:
-        print(f"No data found for {location['Site']} with Id {Id}")
-    
     
 # Convertir la lista de datos a un DataFrame de pandas
 df = pd.DataFrame(data)
