@@ -324,13 +324,18 @@ def get_quality_traffic_data(Id):
 def get_Id_M6(Site):
     url = 'https://webtris.nationalhighways.co.uk/api/v1.0/sites'
     response = requests.get(url)
+    # Verificar si la respuesta es exitosa
     if response.status_code == 200:
         data = response.json()
+        # Verificar si la clave 'sites' está en la respuesta
         if 'sites' in data:
+            # Iterar sobre los sitios y buscar el Id correspondiente
             for row in data['sites']:
                 desc = row.get('Description', '').strip().upper()
                 site = Site.strip().upper()
+                # Comparar el nombre del sitio con la descripción
                 if desc == site:
+                    # Si coinciden, devolver el Id
                     return row.get('Id')
         else:
             print("No 'Sites' key in API response!")
@@ -469,6 +474,14 @@ for location in locations2:
 df = pd.DataFrame(data)
 #print(df)
 # Guardar el DataFrame en un archivo CSV
-df.to_csv('traffic_data.csv', index=False)
+#df.to_csv('traffic_data.csv', index=False)
 # Guardar el DataFrame en un archivo Excel
+
+
+# 1,048,575 + 1 cabecero = 1,048,576 filas (límite de Excel)
+max_rows = 1048575  
+for i, start in enumerate(range(0, len(df), max_rows)):
+    end = min(start + max_rows, len(df))
+    chunk = df.iloc[start:end].reset_index(drop=True)
+    chunk.to_excel(f'traffic_data_part{i+1}.xlsx', index=False)
 #df.to_excel('traffic_data.xlsx', index=False)
