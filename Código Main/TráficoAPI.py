@@ -366,7 +366,128 @@ locations = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6238A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6238B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6241A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6241B' }
+    {'Highway' : 'M6 North', 'Site' : 'M6/6241B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6245A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6245B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6248A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6249B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6252A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6252B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6257A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6257B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6260A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6260B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6265A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6265B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6271A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6271B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6274A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6274B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6279A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6279B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6282A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6282B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6282J' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6283M' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6285A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6285B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6285K' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6285L' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6289A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6289B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6292A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6292B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6297A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6297B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6302A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6302B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6304A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6304B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6307B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6310A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6314A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6314B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6315A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6318B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6320A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6319B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6324A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6324B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6327A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6327B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6330A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6330B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6333A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6333B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6338A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6340B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6340L' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6344A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6344B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6346A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6346B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6349J' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6350B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6350A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6353B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6353A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6357B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6357A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6361B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6361A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6365A' }, 
+    {'Highway' : 'M6 North', 'Site' : 'M6/6365B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6368A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6368B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6373A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6373B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6377A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6377B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6380A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6380B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6386A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6386B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6389A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6389B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6394A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6394B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6398A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6398B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6403A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6403B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6406A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6406B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6412A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6412B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6417A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6417B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6422A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6422B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6425A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6425B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6431A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6431B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6437A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6435B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6442A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6442B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6447A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6446B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6452A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6452B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6456A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6454B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6462J' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6458B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6461A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6462B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6462M' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6472B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6472A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6477B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6477A' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6491B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6491A' }
 
 ]
 
@@ -374,8 +495,8 @@ locations = [
 # TODO Terminar lista de locations de la M6 hacia el norte 
 
 StartDate = '01012025'
-EndDate = '31032025'
-PageSize = 12000 # Hay 96 intervalos de 15 minutos en un día, con lo que 39990 intervalos cubren desde el 1 de enero de 2025 hasta el 31 de marzo de 2025
+EndDate = '30042025'
+PageSize = 12000 # Hay 96 intervalos de 15 minutos en un día, con lo que 12000 intervalos cubren desde el 1 de enero de 2025 hasta el 31 de marzo de 2025
 
 # Función para obtener los datos de tráfico
 def get_traffic_data(Id):
@@ -421,7 +542,7 @@ def get_Id_M6(Site):
         print(f"Error: {response.status_code}")
     return None
 
-# Apendar los Ids a la lista locations2
+# Apendar los Ids a la lista locations
 for location in locations:
     if 'Id' not in location or not location['Id']:
         site_name = location['Site']
@@ -429,7 +550,6 @@ for location in locations:
         location['Id'] = site_id  
     
 # Verificar que se han añadido los Ids correctamente
-#print(locations2)  
 
 # Lista para almacenar los datos
 data=[]
