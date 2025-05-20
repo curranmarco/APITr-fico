@@ -27,7 +27,7 @@ locations = [
     {'Highway' : 'M6Toll', 'Site' : '7681/1' },
     {'Highway' : 'M6Toll', 'Site' : '7681/2' },
     {'Highway' : 'M6Toll', 'Site' : '7682/1' },
-    {'Highway' : 'M6Toll', 'Site' : '7682/2' }  
+    {'Highway' : 'M6Toll', 'Site' : '7682/2' },
     {'Highway' : 'M6', 'Site' : 'M6/5686A' },
     {'Highway' : 'M6', 'Site' : 'M6/5686B' },
     {'Highway' : 'M6', 'Site' : 'M6/5689B' },
@@ -75,7 +75,6 @@ locations = [
     {'Highway' : 'M6', 'Site' : 'M6/5757A' },
     {'Highway' : 'M6', 'Site' : 'M6/5760A' },
     {'Highway' : 'M6', 'Site' : 'M6/5761B' },
-    {'Highway' : 'M6', 'Site' : 'M6/5757B' },
     {'Highway' : 'M6', 'Site' : 'M6/5763A' },
     {'Highway' : 'M6', 'Site' : 'M6/5764B' },
     {'Highway' : 'M6', 'Site' : 'M6/5765B' },
@@ -250,9 +249,9 @@ locations = [
     {'Highway' : 'M6', 'Site' : 'M6/6036A' },
     {'Highway' : 'M6', 'Site' : 'M6/6036J' },
     {'Highway' : 'M6', 'Site' : 'M6/6040B' },
-    {'Highway' : 'M6', 'Site' : 'M6/6040A' },
+    {'Highway' : 'M6', 'Site' : 'M6/6040A', 'Id' : '10412' },
     {'Highway' : 'M6', 'Site' : 'M6/6041M' },
-    {'Highway' : 'M6', 'Site' : 'M6/6042A' },
+    {'Highway' : 'M6', 'Site' : 'M6/6042A', 'Id' : '10562'},
     {'Highway' : 'M6', 'Site' : 'M6/6042J' },
     {'Highway' : 'M6', 'Site' : 'M6/6046B' },
     {'Highway' : 'M6', 'Site' : 'M6/6046A' },
@@ -261,19 +260,18 @@ locations = [
     {'Highway' : 'M6', 'Site' : 'M6/6050B' },
     {'Highway' : 'M6', 'Site' : 'M6/6052A' },
     {'Highway' : 'M6', 'Site' : 'M6/6054B' },
-    {'Highway' : 'M6', 'Site' : 'M6/6054A' },
-    {'Highway' : 'M6', 'Site' : 'M6/6054B' },
+    {'Highway' : 'M6', 'Site' : 'M6/6054A', 'Id' : '10507' },
+    {'Highway' : 'M6', 'Site' : 'M6/6054B', 'Id' : '10318' },
     {'Highway' : 'M6', 'Site' : 'M6/6056L' },
-    {'Highway' : 'M6', 'Site' : 'M6/6058A' },
-    {'Highway' : 'M6', 'Site' : 'M6/6058B' },
-    {'Highway' : 'M6', 'Site' : 'M6/6061A' },
-    {'Highway' : 'M6', 'Site' : 'M6/6061B' },
+    {'Highway' : 'M6', 'Site' : 'M6/6058A', 'Id' : '10563' },
+    {'Highway' : 'M6', 'Site' : 'M6/6058B', 'Id' : '10466' },
+    {'Highway' : 'M6', 'Site' : 'M6/6061A', 'Id' : '10312' },
+    {'Highway' : 'M6', 'Site' : 'M6/6061B',  'Id' : '10425' },
     {'Highway' : 'M6', 'Site' : 'M6/6061L' },
     {'Highway' : 'M6', 'Site' : 'M6/6065A' },
     {'Highway' : 'M6', 'Site' : 'M6/6065J' },
     {'Highway' : 'M6', 'Site' : 'M6/6067B' },
-    {'Highway' : 'M6', 'Site' : 'M6/6067A' },
-    {'Highway' : 'M6', 'Site' : 'M6/6067B' },
+    {'Highway' : 'M6', 'Site' : 'M6/6067A', 'Id' : '10281' },
     {'Highway' : 'M6', 'Site' : 'M6/6067M' },
     {'Highway' : 'M6', 'Site' : 'M6/6067J' },
     {'Highway' : 'M6', 'Site' : 'M6/6070A' },
@@ -363,8 +361,8 @@ locations = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6226B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6231A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6231B' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6234A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6234B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6234A', 'Id' : '19324' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6234B', 'Id' : '19254' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6238A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6238B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6241A' },
@@ -376,8 +374,8 @@ locations = [
 # TODO Terminar lista de locations de la M6 hacia el norte 
 
 StartDate = '01012025'
-EndDate = '30042025'
-PageSize = 39990 # Hay 96 intervalos de 15 minutos en un día, con lo que 39990 intervalos cubren desde el 1 de enero de 2025 hasta el 31 de marzo de 2025
+EndDate = '31032025'
+PageSize = 12000 # Hay 96 intervalos de 15 minutos en un día, con lo que 39990 intervalos cubren desde el 1 de enero de 2025 hasta el 31 de marzo de 2025
 
 # Función para obtener los datos de tráfico
 def get_traffic_data(Id):
@@ -425,9 +423,10 @@ def get_Id_M6(Site):
 
 # Apendar los Ids a la lista locations2
 for location in locations:
-    site_name = location['Site']
-    site_id = get_Id_M6(site_name)
-    location['Id'] = site_id  
+    if 'Id' not in location or not location['Id']:
+        site_name = location['Site']
+        site_id = get_Id_M6(site_name)
+        location['Id'] = site_id  
     
 # Verificar que se han añadido los Ids correctamente
 #print(locations2)  
