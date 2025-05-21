@@ -1,7 +1,7 @@
 import pandas as pd
 import requests
 
-locations_df = pd.read_csv('locations.csv')
+locations_df = pd.read_csv('locationsSinComa.csv')
 locations = locations_df.to_dict(orient='records')
 
 # TODO Terminar lista de locations de la M6 hacia el norte 
@@ -113,7 +113,7 @@ for location in locations:
     if traffic_data and 'Rows' in traffic_data:
         # Extraer los datos que nos interesan
         for row in traffic_data['Rows']:
-            Date = row.get('Report Date')
+            Date = row.get('Report Date').strip()[:10]
             TimeInterval = row.get('Time Interval')
             AverageSpeed = row.get('Avg mph')
             TotalTraffic = row.get('Total Volume')
@@ -184,13 +184,27 @@ df = pd.DataFrame(data)
 #print(df)
 # Guardar el DataFrame en un archivo CSV
 #df.to_csv('traffic_data.csv', index=False)
+
+
 # Guardar el DataFrame en un archivo Excel
-
-
 # 1,048,575 + 1 cabecero = 1,048,576 filas (límite de Excel)
+"""
 max_rows = 1048575  
 for i, start in enumerate(range(0, len(df), max_rows)):
     end = min(start + max_rows, len(df))
     chunk = df.iloc[start:end].reset_index(drop=True)
     chunk.to_excel(f'traffic_data_part{i+1}.xlsx', index=False)
 #df.to_excel('traffic_data.xlsx', index=False)
+"""
+columnasInteres = ['Date', 'Id','TimeInterval','TotalTraffic']
+df2 = df[columnasInteres][df['Id'].isin(['9236','9237']) & df['Date'] == '2025-03-01']
+#print(df2)
+
+# Create the hour column (0,1,2,3 -> 00:00:00, 4,5,6,7 -> 01:00:00, etc.)
+df2 = df2.copy()
+df2['Hour'] = df2['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00")
+
+# Group by Date, Id, Hour and sum TotalTraffic
+df3 = df2.groupby(['Date', 'Id', 'Hour'], as_index=False)['TotalTraffic'].sum()
+
+print(df3)
