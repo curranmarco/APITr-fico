@@ -368,7 +368,7 @@ locations = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6241A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6241B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6245A', 'Id' : '19338' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6245B', 'Id' : '18175' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6245B', 'Id' : '19175' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6248A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6249B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6252A' },
@@ -409,7 +409,6 @@ locations = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6314B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6318B', 'Id' : '19210'  },
     {'Highway' : 'M6 North', 'Site' : 'M6/6320A' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6319B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6324A', 'Id' : '19362'  },
     {'Highway' : 'M6 North', 'Site' : 'M6/6324B', 'Id' : '19216'  },
     {'Highway' : 'M6 North', 'Site' : 'M6/6327A' },
@@ -465,7 +464,7 @@ locations = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6425A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6425B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6431A', 'Id' : '19443'   },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6431B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6431B', 'Id' : '19270' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6437A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6435B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6442A' },
@@ -473,12 +472,12 @@ locations = [
     {'Highway' : 'M6 North', 'Site' : 'M6/6447A', 'Id' : '19168'   },
     {'Highway' : 'M6 North', 'Site' : 'M6/6446B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6452A', 'Id' : '19421'   },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6452B' },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6452B', 'Id' : '19298' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6456A' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6454B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6462J' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6458B' },
-    {'Highway' : 'M6 North', 'Site' : 'M6/6461A', 'Id' : '19212'   },
+    {'Highway' : 'M6 North', 'Site' : 'M6/6461A' },#, 'Id' : '19212'   },
     {'Highway' : 'M6 North', 'Site' : 'M6/6462B' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6462M' },
     {'Highway' : 'M6 North', 'Site' : 'M6/6472B' },
@@ -517,28 +516,47 @@ def get_quality_traffic_data(Id):
         print(f"Error: {response.status_code}")
         return None
 
+url = 'https://webtris.nationalhighways.co.uk/api/v1.0/sites'
+response = requests.get(url)
+# Verificar si la respuesta es exitosa
+if response.status_code == 200:
+    dataSites = response.json()
+else :
+    print(f"Error: {response.status_code}")
+
+
 # Función para obtener el Id de M6
 def get_Id_M6(Site):
-    url = 'https://webtris.nationalhighways.co.uk/api/v1.0/sites'
-    response = requests.get(url)
-    # Verificar si la respuesta es exitosa
-    if response.status_code == 200:
-        data = response.json()
-        # Verificar si la clave 'sites' está en la respuesta
-        if 'sites' in data:
-            # Iterar sobre los sitios y buscar el Id correspondiente
-            for row in data['sites']:
-                desc = row.get('Description', '').strip().upper()
-                site = Site.strip().upper()
-                # Comparar el nombre del sitio con la descripción
-                if desc == site:
-                    # Si coinciden, devolver el Id
-                    return row.get('Id')
-        else:
-            print("No 'Sites' key in API response!")
+    found_inactive = False
+    site = Site.strip().upper()
+    # Verificar si la clave 'sites' está en la respuesta
+    if 'sites' in dataSites:
+        # Iterar sobre los sitios y buscar el Id correspondiente
+        for row in dataSites['sites']:
+            desc = row.get('Description', '').strip().upper()
             
+            # Recogemos el status para ver si el site está activo o inactivo 
+            status = row.get('Status', '').strip() 
+            
+            # Comparar el nombre del sitio con la descripción
+            if desc == site:
+                # Si se encuentra un site, comprobar su status
+                # Si el status es 'Active', devolver el Id 
+                if status == 'Active':
+                    return row.get('Id')
+                else:
+                    found_inactive = True
+        
+        #! Esto solo ocurre si no se encuentra un Id activo para el site
+        #! o no se encuentra un Id para el site
+        if found_inactive:
+            print(f'Inactive site found for {site}.')
+        else: 
+            print(f'Site {site} not found in API response.')
+                         
     else:
-        print(f"Error: {response.status_code}")
+        print("No 'sites' key in API response!")
+            
     return None
 
 # Apendar los Ids a la lista locations
@@ -548,10 +566,11 @@ for location in locations:
         site_id = get_Id_M6(site_name)
         location['Id'] = site_id  
     
-# Verificar que se han añadido los Ids correctamente
 
 # Lista para almacenar los datos
 data=[]
+
+# Iterar sobre cada ubicación y obtener los datos de tráfico
 for location in locations:
     # Construir la URL para cada ubicación
     Id = location['Id']
@@ -567,6 +586,7 @@ for location in locations:
             date = q.get('Date', '')[:10]
             qualitybyDate[date] = q.get('Quality', '')
     else:
+        #! No hay datos de calidad
         print(f"No quality data found for {location['Site']} with Id {Id}")
 
 
@@ -602,6 +622,7 @@ for location in locations:
 
         #print(data)
     else:
+        #! No hay datos de tráfico
         print(f"No data found for {location['Site']} with Id {Id}")
     
     """
