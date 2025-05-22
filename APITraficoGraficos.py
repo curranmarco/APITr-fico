@@ -100,3 +100,9 @@ crear_grafico(['9236', '9237'])
 crear_grafico(['10308', '10559'])
 crear_grafico(['10464', '10654'])
 crear_grafico(['9238', '9239'])
+
+#! Seleccionar una semana entera en la que podamos recoger datos en la location 
+#! En principio vamos a usar la location direccion southbound de M6 - m6Toll -> la tercera llamada
+#! Crear un grafico para cada dia de la semana, para ver el flujo de tráfico de esa location durante esa semana 
+#! Una vez tengamos esa semana , mirar otras semanas para poder comparar y ver patrones 
+#! En principio para ese site, deberiamos tener alrededor de 7 graficos por semana 
