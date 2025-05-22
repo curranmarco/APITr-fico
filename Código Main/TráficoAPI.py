@@ -81,7 +81,7 @@ for location in locations:
     if 'Id' not in location or not location['Id']:
         site_name = location['Site']
         site_id, direction = get_Id_M6(site_name)
-        location['Id'] = site_id
+        location['Id'] = str(site_id) if site_id is not None else ''
         location['Direction'] = direction  
     
 
@@ -123,26 +123,6 @@ for location in locations:
             Cars1161 = row.get('1160+ cm') 
             quality = qualitybyDate.get(Date[:10] if Date else None)
             
-            """
-            # Determinar la direccion de la carretera
-            direction = ""
-            if location['Highway'].strip().upper() in ['M6', 'M6 NORTH']:
-                site_str = location['Site']
-                if site_str and len(site_str) > 0:
-                    last_char = site_str[-1].upper()
-                    if last_char == 'A':
-                        direction = "Northbound"
-                    elif last_char == 'B':
-                        direction = "Southbound"
-                    elif last_char == 'J':
-                        direction = "Northbound"
-                    elif last_char == 'L':
-                        direction = "Southbound"
-                    elif last_char == 'K':
-                        direcion = "Northbound" 
-                    elif last_char == 'M':
-                        direction = "Southbound"
-            """
             # Agregar los datos a la lista
             data.append({
                 'Highway': location['Highway'],
@@ -165,25 +145,11 @@ for location in locations:
         #! No hay datos de tráfico
         print(f"No data found for {location['Site']} with Id {Id}")
     
-    """
-    Este codigo es el antiguo para extraer los datos de calidad, esta aquí por si se necesita
-    if quality_data and 'Qualities' in quality_data:
-        # Extraer los datos de calidad
-        for row in quality_data['Qualities']:
-            Quality = row.get('Quality')
-            data.append({
-                'Quality' : Quality
-            })
-    else :
-        print(f"No quality data found for {location['Site']} with Id {Id}") 
-
-    """    
-    
 # Convertir la lista de datos a un DataFrame de pandas
 df = pd.DataFrame(data)
-#print(df)
+
 # Guardar el DataFrame en un archivo CSV
-#df.to_csv('traffic_data.csv', index=False)
+df.to_csv('traffic_data_full.csv', index=False)
 
 
 # Guardar el DataFrame en un archivo Excel
@@ -196,20 +162,3 @@ for i, start in enumerate(range(0, len(df), max_rows)):
     chunk.to_excel(f'traffic_data_part{i+1}.xlsx', index=False)
 #df.to_excel('traffic_data.xlsx', index=False)
 """
-columnasInteres = ['Date', 'Id','TimeInterval','TotalTraffic']
-df2 = df[columnasInteres][df['Id'].isin(['9236','9237']) & df['Date'] == '2025-03-01']
-#print(df2)
-
-# Para que Panda no de error al hacer el groupby y lo confunda con un view (que nos deje editar el df2)
-df2 = df2.copy()
-
-# Aplicar la función lambda para convertir el TimeInterval a horas
-# Divide el TimeInterval entre 4 y convierte a entero para obtener la hora (cogiendo el valor del primer intervalo)
-# Formatea la hora como una cadena de 2 dígitos y añade ":00:00" al final
-df2['Hour'] = df2['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00")
-
-#Crear el tercer dataframe agrupandolo por fecha, Id y hora
-# Sumamos el TotalTraffic para cada cuatro intervalos de 15 minutos
-df3 = df2.groupby(['Date', 'Id', 'Hour'], as_index=False)['TotalTraffic'].sum()
-
-print(df3)
