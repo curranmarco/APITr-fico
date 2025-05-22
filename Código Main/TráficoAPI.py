@@ -39,8 +39,8 @@ else :
     print(f"Error: {response.status_code}")
 
 
-# Función para obtener el Id de M6
-def get_Id_M6(Site):
+# Función para obtener el Id, Status, Latitud y Longitud de el site correspondiente
+def get_Attr(Site):
     found_inactive = False
     site = Site.strip().upper()
     # Verificar si la clave 'sites' está en la respuesta
@@ -48,6 +48,8 @@ def get_Id_M6(Site):
         # Iterar sobre los sitios y buscar el Id correspondiente
         for row in dataSites['sites']:
             desc = row.get('Description', '').strip().upper()
+            latitude = row.get('Latitude')
+            longitude = row.get('Longitude')
             
             # Recogemos el status para ver si el site está activo o inactivo 
             status = row.get('Status', '').strip() 
@@ -60,7 +62,7 @@ def get_Id_M6(Site):
                     site_id = row.get('Id')
                     name = row.get('Name', '')
                     direction = name[-10:].strip() if len(name) > 10 else ''
-                    return site_id, direction
+                    return site_id, direction, latitude, longitude
                 else:
                     found_inactive = True
         
@@ -80,10 +82,23 @@ def get_Id_M6(Site):
 for location in locations:
     if 'Id' not in location or not location['Id']:
         site_name = location['Site']
-        site_id, direction = get_Id_M6(site_name)
+        site_id, direction, longitude, latitude = get_Attr(site_name)
         location['Id'] = str(site_id) if site_id is not None else ''
         location['Direction'] = direction  
+        location['Longitude'] = longitude
+        location['Latitude'] = latitude
     
+def interval_to_time(interval):
+    # Pasar el intervalo a entero por si acaso
+    interval = int(interval)
+    # Dividirlo entre cautro para obtener la hora
+    hour = interval // 4
+    # Obtener el minuto correspondiente al intervalo, que lo hace cogiendo el resto de la division entre 4
+    # 0 -> 00, 1 -> 15, 2 -> 30, 3 -> 45
+    minute = [14,29,44,59][interval % 4]
+    # Devolver la hora y el minuto en formato HH:MM:SS, asegurandose que siempre tenga dos digitos
+    return f"{hour:02d}:{minute:02d}:00"
+
 
 # Lista para almacenar los datos
 data=[]
@@ -128,6 +143,8 @@ for location in locations:
                 'Highway': location['Highway'],
                 'Id': location['Id'],
                 'Site': location['Site'],
+                'Longitude': location.get('Longitude', ''), 
+                'Latitude': location.get('Latitude', ''),
                 'Direction': location.get('Direction', ''),
                 'Date': Date,
                 'TimeInterval': TimeInterval,
@@ -147,6 +164,14 @@ for location in locations:
     
 # Convertir la lista de datos a un DataFrame de pandas
 df = pd.DataFrame(data)
+
+# Convertir la culumna de intervalo de string a numérico
+df['TimeInterval'] = pd.to_numeric(df['TimeInterval'], errors='coerce')
+
+# Utilizar la funcion para convertir el intervalo a la hora correspondiente
+df['TimeString'] = df['TimeInterval'].apply(interval_to_time)
+# Formatear la columna DateTime correctamente con la fehca y hora para cada intervalo
+df['DateTime'] = pd.to_datetime(df['Date'] + ' ' + df['TimeString'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
 
 # Guardar el DataFrame en un archivo CSV
 df.to_csv('traffic_data_full.csv', index=False)
