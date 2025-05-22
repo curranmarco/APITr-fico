@@ -48,6 +48,9 @@ def plot_traffic_by_hour(df, site_ids, date, title=None):
     columnasInteres = ['Date', 'Id', 'TimeInterval', 'TotalTraffic']
     df2 = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)][columnasInteres].copy()
     
+    df2['TimeInterval'] = pd.to_numeric(df2['TimeInterval'], errors='coerce')
+    df2['TotalTraffic'] = pd.to_numeric(df2['TotalTraffic'], errors='coerce')
+    
     # Aplicar la función lambda para convertir el TimeInterval a horas
     # Divide el TimeInterval entre 4 y convierte a entero para obtener la hora (cogiendo el valor del primer intervalo)
     # Formatea la hora como una cadena de 2 dígitos y añade ":00:00" al final
@@ -59,6 +62,14 @@ def plot_traffic_by_hour(df, site_ids, date, title=None):
     
     # Pivotar el dataframe para que las horas sean el índice y los Ids sean las columnas
     pivot_df = df3.pivot(index='Hour', columns='Id', values='TotalTraffic')
+    
+    # Rellenar NaN con 0 para evitar errores en el gráfico
+    pivot_df = pivot_df.fillna(0)  
+    
+    for site_id in site_ids:
+        if site_id not in pivot_df.columns:
+            pivot_df[site_id] = 0
+    pivot_df = pivot_df[site_ids]
 
     # Crear el gráfico
     plt.figure(figsize=(12, 6))
@@ -80,5 +91,12 @@ def crear_grafico(site_ids):
 #plot_traffic_by_hour(df, ['9236', '9237'], '2025-03-01', 'Traffic Volume by Hour for Sites 9236 and 9237 on 2025-03-01')
 #plot_traffic_by_hour(df, ['10308', '10559'], '2025-03-01', 'Traffic Volume by Hour for Sites 10308 and 10559 on 2025-03-01')
 
+
+df['TimeInterval'] = pd.to_numeric(df['TimeInterval'], errors='coerce')
+df['TotalTraffic'] = pd.to_numeric(df['TotalTraffic'], errors='coerce')
+
+
 crear_grafico(['9236', '9237'])
 crear_grafico(['10308', '10559'])
+crear_grafico(['10464', '10654'])
+crear_grafico(['9238', '9239'])
