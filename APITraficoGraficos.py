@@ -73,6 +73,7 @@ def plot_weekly_toll_percentage(df, site_ids, week_dates, title=None):
     plt.pie(values, labels=labels, autopct='%1.1f%%', colors=colors, startangle=90, wedgeprops=dict(width=0.4))
     plt.title(title or 'Percentage of Vehicles: M6 Toll vs Exit')
     
+    # Guardar el gráfico
     filename = f"weekly_toll_percentage_{'_'.join(site_ids)}_{week_dates[0]}_{week_dates[-1]}.png"
     plt.savefig(filename)
     #plt.show()
