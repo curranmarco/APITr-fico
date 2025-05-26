@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import pyodbc
 
 locations_df = pd.read_csv('locationsSinComa.csv')
 locations = locations_df.to_dict(orient='records')
@@ -172,6 +173,42 @@ df['TimeInterval'] = pd.to_numeric(df['TimeInterval'], errors='coerce')
 df['TimeString'] = df['TimeInterval'].apply(interval_to_time)
 # Formatear la columna DateTime correctamente con la fehca y hora para cada intervalo
 df['DateTime'] = pd.to_datetime(df['Date'] + ' ' + df['TimeString'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
+
+# Drop the old Date and TimeString columns if you don't want them
+df = df.drop(columns=['Date', 'TimeString'])
+
+# Reorder columns: put DateTime after Direction and before TimeInterval
+cols = list(df.columns)
+# Find the index of 'Direction'
+idx = cols.index('Direction')
+# Remove 'DateTime' if already present
+cols.remove('DateTime')
+# Insert 'DateTime' after 'Direction'
+cols.insert(idx + 1, 'DateTime')
+# Reorder DataFrame
+df = df[cols]
+
+"""
+# Export the dataframe to SQL server
+server = 'operacionesaleatica.database.windows.net' 
+database = 'Nivel_de_servicio' 
+username = 'uk_traffic_user' 
+password = '4l3aTic4!tr4FF1c'
+cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
+cursor = cnxn.cursor()
+
+# SQL Operation
+operation = "INSERT INTO mesurements (highway, id, site, longitude, latitude, direction, datetime, cars_0_520_cm, cars_521_660_cm, cars_661_1160_cm, cars_1160_cm, speed_avg, total_traffic, quality) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+
+for _, row in df.iterrows():
+    cursor.execute(operation, row['highway'],row['id'],row['site'],row['longitude'],row['latitude'],row['direction'],row['datetime'],row['cars_0_520_cm'],row['cars_521_660_cm'],row['cars_661_1160_cm'],row['cars_1160_cm'],row['speed_avg'],row['total_traffic'],row['quality'])
+
+# Save the data permanently
+cnxn.commit() 
+# Close the connection
+cursor.close() 
+cnxn.close()
+"""
 
 # Guardar el DataFrame en un archivo CSV
 df.to_csv('traffic_data_full.csv', index=False)
