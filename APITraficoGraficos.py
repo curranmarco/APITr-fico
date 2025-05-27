@@ -55,13 +55,20 @@ def plot_traffic_by_hour(df, site_ids, date, title=None):
 
 # Función para crear el gráfico porcentual de Toll vs Exit After Split
 def plot_toll_exit_after_percentage(df, site_ids, dates, title=None, filename_prefix="toll_exit_after_percentage"):
-    # Filter for the given dates and sites
+    # Función para crear un gráfico de pastel semanal o diario mostrando el porcentaje de vehículos que tomaron el peaje vs la salida,
+    # usando los totales de tráfico de dos puntos después de la bifurcación.
+    # site_ids: [id_peaje, id_salida]
+    # dates: lista de fechas a analizar
+    
+    # Filtrar el DataFrame por los Ids y las fechas seleccionadas
     df_period = df[(df['Id'].isin(site_ids)) & (df['Date'].isin(dates))]
+    # Agrupar por Id y sumar el tráfico total
     totals = df_period.groupby('Id')['TotalTraffic'].sum()
     toll = int(totals.get(site_ids[0], 0))
     exit_ = int(totals.get(site_ids[1], 0))
     total_cars = toll + exit_
 
+    # Preparar datos para el gráfico
     values = [toll, exit_]
     labels = [
         f'Toll ({site_ids[0]})\n{toll:,}',
@@ -69,19 +76,64 @@ def plot_toll_exit_after_percentage(df, site_ids, dates, title=None, filename_pr
     ]
     colors = ['#2196F3', '#FF5722']
 
+    # Crear el gráfico de pastel
     plt.figure(figsize=(6, 6))
     wedges, texts, autotexts = plt.pie(
         values, labels=labels, autopct='%1.1f%%', colors=colors,
         startangle=90, wedgeprops=dict(width=0.4)
     )
+    
+    # Mostrar el total en el centro del gráfico
     plt.text(0, 0, f'Total:\n{int(total_cars):,}', ha='center', va='center', fontsize=14, fontweight='bold')
+    # Título automático si no se proporciona
     if not title:
         if len(dates) == 1:
             title = f'Percentage: Toll vs Exit After Split\n{dates[0]}'
         else:
             title = f'Percentage: Toll vs Exit After Split\n{dates[0]} to {dates[-1]}'
     plt.title(title)
+    # Guardar el gráfico
     filename = f"{filename_prefix}_{'_'.join(site_ids)}_{dates[0]}_{dates[-1] if len(dates)>1 else dates[0]}.png"
+    plt.savefig(filename)
+    plt.close()
+
+def plot_weekly_exit_percentage_by_size(df, site_ids, week_dates, size_col, title=None, filename_prefix="exit_percentage_by_size"):
+    # Función para crear un gráfico de pastel semanal mostrando el porcentaje de vehículos que tomaron la salida vs los que no,
+    # segmentado por tamaño de vehículo (columna size_col).
+    # site_ids: [id_peaje, id_total]
+    # week_dates: lista de fechas de la semana
+    # size_col: columna de tamaño de vehículo a analizar
+    
+    # Filtrar el DataFrame por los Ids y las fechas seleccionadas
+    df_week = df[(df['Id'].isin(site_ids)) & (df['Date'].isin(week_dates))]
+    # Agrupar por Id y sumar la columna de tamaño seleccionada
+    totals = df_week.groupby('Id')[size_col].sum()
+    # Calcular los que tomaron la salida y los que no
+    took_toll = totals.get(site_ids[0], 0)
+    total = totals.get(site_ids[1], 0)
+    took_exit = total - took_toll if total > took_toll else 0
+
+    # Preparar datos para el gráfico
+    values = [took_exit, took_toll]
+    labels = [
+        f'Took Exit\n{took_exit:,}',
+        f'Did Not Take Exit\n{took_toll:,}'
+    ]
+    colors = ['#FF5722', '#2196F3']
+
+    # Crear el gráfico de pastel
+    plt.figure(figsize=(6, 6))
+    wedges, texts, autotexts = plt.pie(
+        values, labels=labels, autopct='%1.1f%%', colors=colors,
+        startangle=90, wedgeprops=dict(width=0.4)
+    )
+    # Mostrar el total en el centro del gráfico
+    plt.text(0, 0, f'Total:\n{int(total):,}', ha='center', va='center', fontsize=14, fontweight='bold')
+    # Título automático si no se proporciona
+    if not title:
+        title = f'Exit vs No Exit ({size_col})\n{week_dates[0]} to {week_dates[-1]}'
+    plt.title(title)
+    filename = f"{filename_prefix}_{size_col.replace(' ', '_')}_{'_'.join(site_ids)}_{week_dates[0]}_{week_dates[-1]}.png"
     plt.savefig(filename)
     plt.close()
 
@@ -130,10 +182,10 @@ def crear_todos_los_graficos(df, site_ids, week_dates, peak_ranges, prefix=""):
         # Daily percentage pie
         plot_toll_exit_after_percentage(df, site_ids, [date], f'Percentage: Toll vs Exit After Split\n{date}', filename_prefix=f"{prefix}toll_exit_after_percentage")
     
-    # 2. Weekly percentage pie
+    # 2. Gráfico semanal de porcentaje de peaje vs salida
     plot_toll_exit_after_percentage(df, site_ids, week_dates, f'Percentage: Toll vs Exit After Split\n{week_dates[0]} to {week_dates[-1]}', filename_prefix=f"{prefix}toll_exit_after_percentage_week")
     
-    # 3. Weekly peak hours percentage pie
+    # 3. Gráficos de porcentaje de salida horas pico
     plot_toll_percentage_peak(df, site_ids, week_dates, peak_ranges, f'Peak Hour %: Toll vs Exit After Split\n{week_dates[0]} to {week_dates[-1]}', filename_prefix=f"{prefix}toll_exit_after_percentage_peak")
 
 def plot_toll_percentage_peak(df, site_ids, dates, peak_ranges, title=None, filename_prefix="toll_percentage_peak"):
@@ -187,21 +239,42 @@ df['Hour'] = df['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00" if pd.n
 # Define peak hour ranges as tuples (start, end)
 peak_ranges = [('06:00:00', '08:00:00'), ('15:00:00', '17:00:00')]
 
+enero = [
+    '2025-01-13', '2025-01-14', '2025-01-15', '2025-01-16',
+    '2025-01-17', '2025-01-18', '2025-01-19'
+]
+
+
+febrero = [
+    '2025-02-10', '2025-02-11', '2025-02-12', '2025-02-13',
+    '2025-02-14', '2025-02-15', '2025-02-16'
+]
+
+marzo = [
+    '2025-03-10', '2025-03-11', '2025-03-12', '2025-03-13',
+    '2025-03-14', '2025-03-15', '2025-03-16'
+]
+
+abril = [
+    '2025-04-07', '2025-04-08', '2025-04-09', '2025-04-10',
+    '2025-04-11', '2025-04-12', '2025-04-13'
+]
+
+df_week_site = df[(df['Id'] == '10464') | (df['Id'] == '10654') & (df['Date'].isin(abril))]
+p50 = df_week_site['TotalTraffic'].quantile(0.50)
+p75 = df_week_site['TotalTraffic'].quantile(0.75)
+p95 = df_week_site['TotalTraffic'].quantile(0.95)
+print(f"Percentiles for TotalTraffic on M6 Toll (Id 10464 and 10654) in January 2025:\n"
+      f"50th Percentile: {p50}\n"
+      f"75th Percentile: {p75}\n"
+      f"95th Percentile: {p95}")
 
 """
 crear_grafico(['9236', '9237'], '2025-03-01')
 crear_grafico(['10308', '10559'], '2025-03-01')
 crear_grafico(['10464', '10654'], '2025-03-01')
 crear_grafico(['9238', '9239'], '2025-03-01')
-"""
 
-#! Seleccionar una semana entera en la que podamos recoger datos en la location 
-#! En principio vamos a usar la location direccion southbound de M6 - m6Toll -> la tercera llamada
-#! Crear un grafico para cada dia de la semana, para ver el flujo de tráfico de esa location durante esa semana 
-#! Una vez tengamos esa semana , mirar otras semanas para poder comparar y ver patrones 
-#! En principio para ese site, deberiamos tener alrededor de 7 graficos por semana 
-
-"""
 # Gráficos de puntos southbound de M6 - m6Toll en Enero 2025
 crear_grafico(['10464', '10654'], '2025-01-13')
 crear_grafico(['10464', '10654'], '2025-01-14')
@@ -210,7 +283,6 @@ crear_grafico(['10464', '10654'], '2025-01-16')
 crear_grafico(['10464', '10654'], '2025-01-17')
 crear_grafico(['10464', '10654'], '2025-01-18')
 crear_grafico(['10464', '10654'], '2025-01-19')
-
 
 # Gráficos de puntos southbound de M6 - m6Toll en Febrero 2025
 crear_grafico(['10464', '10654'], '2025-02-10')
@@ -238,41 +310,22 @@ crear_grafico(['10464', '10654'], '2025-04-10')
 crear_grafico(['10464', '10654'], '2025-04-11')
 crear_grafico(['10464', '10654'], '2025-04-12')
 crear_grafico(['10464', '10654'], '2025-04-13')
-"""
 
-
-enero = [
-    '2025-01-13', '2025-01-14', '2025-01-15', '2025-01-16',
-    '2025-01-17', '2025-01-18', '2025-01-19'
-]
-
-
-febrero = [
-    '2025-02-10', '2025-02-11', '2025-02-12', '2025-02-13',
-    '2025-02-14', '2025-02-15', '2025-02-16'
-]
-
-marzo = [
-    '2025-03-10', '2025-03-11', '2025-03-12', '2025-03-13',
-    '2025-03-14', '2025-03-15', '2025-03-16'
-]
-
-abril = [
-    '2025-04-07', '2025-04-08', '2025-04-09', '2025-04-10',
-    '2025-04-11', '2025-04-12', '2025-04-13'
-]
-"""
-plot_weekly_toll_percentage(df, ['10464', '10654'], enero, 'M6 Toll vs Exit (Enero 13-19, 2025)')
-plot_weekly_toll_percentage(df, ['10464', '10654'], febrero, 'M6 Toll vs Exit (Febrero 10-16, 2025)')
-plot_weekly_toll_percentage(df, ['10464', '10654'], marzo, 'M6 Toll vs Exit (Marzo 10-16, 2025)')
-plot_weekly_toll_percentage(df, ['10464', '10654'], abril, 'M6 Toll vs Exit (Abril 7-13, 2025)')
-
+plot_toll_percentage(df, ['10464', '10654'], enero, 'M6 Toll vs Exit (Enero 13-19, 2025)')
+plot_toll_percentage(df, ['10464', '10654'], febrero, 'M6 Toll vs Exit (Febrero 10-16, 2025)')
+plot_toll_percentage(df, ['10464', '10654'], marzo, 'M6 Toll vs Exit (Marzo 10-16, 2025)')
+plot_toll_percentage(df, ['10464', '10654'], abril, 'M6 Toll vs Exit (Abril 7-13, 2025)')
 
 # For a week
 plot_toll_percentage_peak(df, ['10464', '10654'], enero, peak_ranges, 'M6 Toll vs Exit (Enero 13-19, 2025) Peak Hours')
 plot_toll_percentage_peak(df, ['10464', '10654'], febrero, peak_ranges, 'M6 Toll vs Exit (Febrero 10-16, 2025) Peak Hours')
 plot_toll_percentage_peak(df, ['10464', '10654'], marzo, peak_ranges, 'M6 Toll vs Exit (Marzo 10-16, 2025) Peak Hours')
 plot_toll_percentage_peak(df, ['10464', '10654'], abril, peak_ranges, 'M6 Toll vs Exit (Abril 7-13, 2025) Peak Hours')
-"""
 
-crear_todos_los_graficos(df, ['9235', '9234'], abril, peak_ranges, prefix="m6toll_")
+plot_weekly_exit_percentage_by_size(df, ['10464', '10654'], abril, 'Cars 0 - 520 cm')
+plot_weekly_exit_percentage_by_size(df, ['10464', '10654'], abril, 'Cars 521 - 660 cm')
+plot_weekly_exit_percentage_by_size(df, ['10464', '10654'], abril, 'Cars 661 - 1160 cm')
+plot_weekly_exit_percentage_by_size(df, ['10464', '10654'], abril, 'Cars 1160+ cm')
+
+#crear_todos_los_graficos(df, ['9235', '9234'], abril, peak_ranges, prefix="m6toll_")
+"""
