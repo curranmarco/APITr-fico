@@ -228,10 +228,16 @@ def filter_peak_hours(df, peak_ranges):
     # peak_ranges: list of tuples, e.g. [('06:00:00', '08:00:00'), ('15:00:00', '17:00:00')]
     return df[df['Hour'].between(peak_ranges[0][0], peak_ranges[0][1]) | df['Hour'].between(peak_ranges[1][0], peak_ranges[1][1])]
 
-# Uso de la función para crear gráficos con los puntos que queramos 
-#plot_traffic_by_hour(df, ['9236', '9237'], '2025-03-01', 'Traffic Volume by Hour for Sites 9236 and 9237 on 2025-03-01')
-#plot_traffic_by_hour(df, ['10308', '10559'], '2025-03-01', 'Traffic Volume by Hour for Sites 10308 and 10559 on 2025-03-01')
-
+def crearPercentiles(df, Id1, Id2, Date):
+    df_week_site = df[(df['Id'] == Id1) | (df['Id'] == Id2) & (df['Date'].isin(Date))]
+    p50 = df_week_site['TotalTraffic'].quantile(0.50)
+    p75 = df_week_site['TotalTraffic'].quantile(0.75)
+    p95 = df_week_site['TotalTraffic'].quantile(0.95)
+    print(f"Percentiles for TotalTraffic on M6 Toll (Id 10464 and 10654) in January 2025:\n"
+          f"50th Percentile: {p50}\n"
+          f"75th Percentile: {p75}\n"
+          f"95th Percentile: {p95}")
+    
 
 df['TimeInterval'] = pd.to_numeric(df['TimeInterval'], errors='coerce')
 df['TotalTraffic'] = pd.to_numeric(df['TotalTraffic'], errors='coerce')
@@ -260,14 +266,6 @@ abril = [
     '2025-04-11', '2025-04-12', '2025-04-13'
 ]
 
-df_week_site = df[(df['Id'] == '10464') | (df['Id'] == '10654') & (df['Date'].isin(abril))]
-p50 = df_week_site['TotalTraffic'].quantile(0.50)
-p75 = df_week_site['TotalTraffic'].quantile(0.75)
-p95 = df_week_site['TotalTraffic'].quantile(0.95)
-print(f"Percentiles for TotalTraffic on M6 Toll (Id 10464 and 10654) in January 2025:\n"
-      f"50th Percentile: {p50}\n"
-      f"75th Percentile: {p75}\n"
-      f"95th Percentile: {p95}")
 
 """
 crear_grafico(['9236', '9237'], '2025-03-01')
@@ -327,5 +325,6 @@ plot_weekly_exit_percentage_by_size(df, ['10464', '10654'], abril, 'Cars 521 - 6
 plot_weekly_exit_percentage_by_size(df, ['10464', '10654'], abril, 'Cars 661 - 1160 cm')
 plot_weekly_exit_percentage_by_size(df, ['10464', '10654'], abril, 'Cars 1160+ cm')
 
-#crear_todos_los_graficos(df, ['9235', '9234'], abril, peak_ranges, prefix="m6toll_")
+crear_todos_los_graficos(df, ['9235', '9234'], abril, peak_ranges, prefix="m6toll_")
+crearPercentiles(df, '10464', '10654', enero)
 """
