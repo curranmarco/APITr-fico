@@ -175,7 +175,7 @@ df['TimeString'] = df['TimeInterval'].apply(interval_to_time)
 df['DateTime'] = pd.to_datetime(df['Date'] + ' ' + df['TimeString'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
 
 # Drop the old Date and TimeString columns if you don't want them
-df = df.drop(columns=['Date', 'TimeString'])
+df = df.drop(columns=['Date', 'TimeString', 'TimeInterval'])
 
 # Reorder columns: put DateTime after Direction and before TimeInterval
 cols = list(df.columns)
@@ -188,7 +188,7 @@ cols.insert(idx + 1, 'DateTime')
 # Reorder DataFrame
 df = df[cols]
 
-
+"""
 # Export the dataframe to SQL server
 server = 'operacionesaleatica.database.windows.net' 
 database = 'Nivel_de_servicio' 
@@ -196,6 +196,15 @@ username = 'uk_traffic_user'
 password = '4l3aTic4!tr4FF1c'
 cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 cursor = cnxn.cursor()
+
+existing = pd.read_sql(
+    "SELECT id, datetime, site FROM [Nivel_de_servicio].[dbo].[uk_traffic_data]",
+    cnxn
+)
+# Merge to find new rows
+df = df.merge(existing, left_on=['Id', 'DateTime', 'Site'], right_on=['id', 'datetime', 'site'], how='left', indicator=True)
+df = df[df['_merge'] == 'left_only'].drop(columns=['_merge', 'id', 'datetime', 'site'])
+
 
 # SQL Operation
 operation = "INSERT INTO [Nivel_de_servicio].[dbo].[uk_traffic_data] (highway, id, site, longitude, latitude, direction, datetime, cars_0_520_cm, cars_521_660_cm, cars_661_1160_cm, cars_1160_cm, speed_avg, total_traffic, quality) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
@@ -218,10 +227,10 @@ cnxn.commit()
 # Close the connection
 cursor.close() 
 cnxn.close()
-
+"""
 
 # Guardar el DataFrame en un archivo CSV
-#df.to_csv('traffic_data_full.csv', index=False)
+df.to_csv('traffic_data_full_SQL.csv', index=False)
 
 
 # Guardar el DataFrame en un archivo Excel

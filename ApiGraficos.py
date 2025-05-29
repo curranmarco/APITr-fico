@@ -216,16 +216,23 @@ def plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ran
     plt.savefig(filename)
     plt.close()
 
-def crearPercentiles(df, Id1, Id2, Date):
-    df_week_site = df[(df['Id'] == Id1) | (df['Id'] == Id2) & (df['Date'].isin(Date))]
-    p50 = df_week_site['TotalTraffic'].quantile(0.50)
-    p75 = df_week_site['TotalTraffic'].quantile(0.75)
-    p95 = df_week_site['TotalTraffic'].quantile(0.95)
-    print(f"Percentiles for TotalTraffic on M6 Toll (Id 10464 and 10654) in January 2025:\n"
+def crearPercentilesStayed(df, site_ids, dates, mode):
+    """
+    Calculates percentiles for the number of vehicles that stayed in the M6 Toll after the exit,
+    using the 'stayed' value from modePoints for each date.
+    """
+    stayed_counts = []
+    for date in dates:
+        _, stayed, _ = modePoints(df, site_ids, [date], mode)
+        stayed_counts.append(stayed)
+    p50 = pd.Series(stayed_counts).quantile(0.50)
+    p75 = pd.Series(stayed_counts).quantile(0.75)
+    p95 = pd.Series(stayed_counts).quantile(0.95)
+    print(f"Percentiles for vehicles that STAYED in M6 Toll ({site_ids}) in selected period:\n"
           f"50th Percentile: {p50}\n"
           f"75th Percentile: {p75}\n"
           f"95th Percentile: {p95}")
-
+    
 def crearGraficos(df, site_ids, dates, mode):
     """
     Crea todos los graficos necesarios para analizar el trafico de las carreteras.
@@ -241,4 +248,11 @@ def crearGraficos(df, site_ids, dates, mode):
     plot_weekly_exit_vs_stayed_pie(df, site_ids, dates, mode)
     plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, dates, mode, peak_ranges)
 
-crearGraficos(df, ['9238', '9239'], abril, mode=2)
+#crearGraficos(df, ['9238', '9239'], abril, mode=2)
+crearPercentilesStayed(df, ['10464', '10654'], abril, mode=1)
+
+# TODO Graficos lineares comparando todas las semanas por días (Lunes, Martes, etc.) mostrando las tendencias e un mismo grafico 
+# TODO Dentro de esos graficos mirar si se puedehacer un prmedio, y sacar la mediana (P50) para incluirla 
+# TODO Porcentaje de captacion de vehiculo que se quedan en la toll, gráfico de barras
+# TODO Mirar si podemos incluir las barras y las lineares en el mismo grafico 
+ 
