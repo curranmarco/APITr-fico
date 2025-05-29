@@ -81,11 +81,17 @@ def plot_traffic_by_hour_mode(df, site_ids, date, mode, value_col='TotalTraffic'
     # Prepare DataFrame for the selected date and sites
     df_day = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)].copy()
     df_day['TimeInterval'] = pd.to_numeric(df_day['TimeInterval'], errors='coerce')
+    
+    # Aplicar la función lambda para convertir el TimeInterval a horas
+    # Divide el TimeInterval entre 4 y convierte a entero para obtener la hora (cogiendo el valor del primer intervalo)
+    # Formatea la hora como una cadena de 2 dígitos y añade ":00:00" al final
     df_day['Hour'] = df_day['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00" if pd.notnull(x) else None)
 
     hours = sorted(df_day['Hour'].dropna().unique())
     exit_counts, stayed_counts, before_exit_counts = [], [], []
 
+    # Asegurarse de que las horas están en el formato correcto
+    # Usar función modePoints para cada hora
     for hour in hours:
         df_hour = df_day[df_day['Hour'] == hour]
         # Use modePoints for each hour
@@ -94,7 +100,7 @@ def plot_traffic_by_hour_mode(df, site_ids, date, mode, value_col='TotalTraffic'
         stayed_counts.append(stayed)
         before_exit_counts.append(before_exit)
 
-    # Plot
+    # Crear grafico
     plt.figure(figsize=(12, 6))
     plt.plot(hours, exit_counts, marker='o', label='Exit')
     plt.plot(hours, stayed_counts, marker='o', label='Stayed')
@@ -114,9 +120,12 @@ def plot_exit_vs_stayed_pie(df, site_ids, date, mode, value_col='TotalTraffic', 
     Plots a pie chart for a single day showing the percentage and total of vehicles that took the exit vs stayed,
     using modePoints for the calculation.
     """
+    
+    # Usar funcion modePoints para calcular los valores
     exit_count, stayed_count, before_exit_count = modePoints(df, site_ids, [date], mode, value_col)
     total = exit_count + stayed_count
 
+    # Crear el grafico de pastel
     values = [exit_count, stayed_count]
     labels = [
         f'Took Exit\n{exit_count:,}',
@@ -167,9 +176,12 @@ def plot_weekly_exit_vs_stayed_pie(df, site_ids, week_dates, mode, value_col='To
     
 def filter_peak_hours(df, peak_ranges):
     """Return a DataFrame filtered to only include rows within the given peak hour ranges (inclusive, like .between())."""
+    # Variable para almacenar el filtro
     mask = False
+    # Iterar sobre los rangos de horas pico y aplicar el filtro
     for start, end in peak_ranges:
         mask |= df['Hour'].between(start, end, inclusive='both')
+    # Devolver el DataFrame filtrado
     return df[mask]
 
 def plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ranges, value_col='TotalTraffic', title=None, filename_prefix="exit_vs_stayed_week_peak"):
@@ -206,17 +218,29 @@ def plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ran
     plt.savefig(filename)
     plt.close()
 
-
+def crearPercentiles(df, Id1, Id2, Date):
+    df_week_site = df[(df['Id'] == Id1) | (df['Id'] == Id2) & (df['Date'].isin(Date))]
+    p50 = df_week_site['TotalTraffic'].quantile(0.50)
+    p75 = df_week_site['TotalTraffic'].quantile(0.75)
+    p95 = df_week_site['TotalTraffic'].quantile(0.95)
+    print(f"Percentiles for TotalTraffic on M6 Toll (Id 10464 and 10654) in January 2025:\n"
+          f"50th Percentile: {p50}\n"
+          f"75th Percentile: {p75}\n"
+          f"95th Percentile: {p95}")
 
 def crearGraficos(df, site_ids, dates, mode):
-   
-    #Creates traffic graphs for the specified site IDs and dates using the given mode.
-   
+    """
+    Crea todos los graficos necesarios para analizar el trafico de las carreteras.
+    site_ids: Lista de IDs de sitios a analizar
+    dates: Lista de fechas a analizar (formato YYYY-MM-DD)
+    mode: Como se deben interpretar los puntos de trafico
+    """
+    
     for date in dates:
         plot_traffic_by_hour_mode(df, site_ids, date, mode)
         plot_exit_vs_stayed_pie(df, site_ids, date, mode)
     
     plot_weekly_exit_vs_stayed_pie(df, site_ids, dates, mode)
     plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, dates, mode, peak_ranges)
-    
-crearGraficos(df, ['9234', '9235'], abril, mode=2)
+
+crearGraficos(df, ['9238', '9239'], abril, mode=2)

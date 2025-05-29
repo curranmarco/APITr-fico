@@ -188,7 +188,7 @@ cols.insert(idx + 1, 'DateTime')
 # Reorder DataFrame
 df = df[cols]
 
-"""
+
 # Export the dataframe to SQL server
 server = 'operacionesaleatica.database.windows.net' 
 database = 'Nivel_de_servicio' 
@@ -198,20 +198,20 @@ cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database
 cursor = cnxn.cursor()
 
 # SQL Operation
-operation = "INSERT INTO mesurements (highway, id, site, longitude, latitude, direction, datetime, cars_0_520_cm, cars_521_660_cm, cars_661_1160_cm, cars_1160_cm, speed_avg, total_traffic, quality) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+operation = "INSERT INTO [Nivel_de_servicio].[dbo].[uk_traffic_data] (highway, id, site, longitude, latitude, direction, datetime, cars_0_520_cm, cars_521_660_cm, cars_661_1160_cm, cars_1160_cm, speed_avg, total_traffic, quality) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
 for _, row in df.iterrows():
-    cursor.execute(operation, row['highway'],row['id'],row['site'],row['longitude'],row['latitude'],row['direction'],row['datetime'],row['cars_0_520_cm'],row['cars_521_660_cm'],row['cars_661_1160_cm'],row['cars_1160_cm'],row['speed_avg'],row['total_traffic'],row['quality'])
+    cursor.execute(operation, row['Highway'],row['Id'],row['Site'],row['Longitude'],row['Latitude'],row['Direction'],row['DateTime'],row['Cars 0 - 520 cm'],row['Cars 521 - 660 cm'],row['Cars 661 - 1160 cm'],row['Cars 1160+ cm'],row['AverageSpeed'],row['TotalTraffic'],row['Quality'])
 
 # Save the data permanently
 cnxn.commit() 
 # Close the connection
 cursor.close() 
 cnxn.close()
-"""
+
 
 # Guardar el DataFrame en un archivo CSV
-df.to_csv('traffic_data_full.csv', index=False)
+#df.to_csv('traffic_data_full.csv', index=False)
 
 
 # Guardar el DataFrame en un archivo Excel
