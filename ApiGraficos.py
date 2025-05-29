@@ -14,7 +14,6 @@ enero = [
     '2025-01-17', '2025-01-18', '2025-01-19'
 ]
 
-
 febrero = [
     '2025-02-10', '2025-02-11', '2025-02-12', '2025-02-13',
     '2025-02-14', '2025-02-15', '2025-02-16'
@@ -31,7 +30,6 @@ abril = [
 ]
 
 peak_ranges = [('06:00:00', '08:00:00'), ('15:00:00', '17:00:00')]
-
 
 
 def modePoints(df, site_ids, dates, mode, value_col='TotalTraffic'):
@@ -70,7 +68,7 @@ def modePoints(df, site_ids, dates, mode, value_col='TotalTraffic'):
     else:
         raise ValueError("Invalid mode")
     return max(exit_, 0), max(stayed, 0), max(before_exit, 0)
-             
+
 def plot_traffic_by_hour_mode(df, site_ids, date, mode, value_col='TotalTraffic', title=None):
     """
     Plots hourly traffic using modePoints to calculate exit, stayed, and before_exit counts.
@@ -114,7 +112,7 @@ def plot_traffic_by_hour_mode(df, site_ids, date, mode, value_col='TotalTraffic'
     filename = f"traffic_mode_{mode}_{'_'.join(site_ids)}_{date}.png"
     plt.savefig(filename)
     plt.close()
-    
+
 def plot_exit_vs_stayed_pie(df, site_ids, date, mode, value_col='TotalTraffic', title=None, filename_prefix="exit_vs_stayed"):
     """
     Plots a pie chart for a single day showing the percentage and total of vehicles that took the exit vs stayed,
@@ -173,7 +171,7 @@ def plot_weekly_exit_vs_stayed_pie(df, site_ids, week_dates, mode, value_col='To
     filename = f"{filename_prefix}_mode{mode}_{'_'.join(site_ids)}_{week_dates[0]}_{week_dates[-1]}.png"
     plt.savefig(filename)
     plt.close()
-    
+
 def filter_peak_hours(df, peak_ranges):
     """Return a DataFrame filtered to only include rows within the given peak hour ranges (inclusive, like .between())."""
     # Variable para almacenar el filtro

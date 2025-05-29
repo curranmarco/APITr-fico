@@ -200,8 +200,18 @@ cursor = cnxn.cursor()
 # SQL Operation
 operation = "INSERT INTO [Nivel_de_servicio].[dbo].[uk_traffic_data] (highway, id, site, longitude, latitude, direction, datetime, cars_0_520_cm, cars_521_660_cm, cars_661_1160_cm, cars_1160_cm, speed_avg, total_traffic, quality) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
-for _, row in df.iterrows():
-    cursor.execute(operation, row['Highway'],row['Id'],row['Site'],row['Longitude'],row['Latitude'],row['Direction'],row['DateTime'],row['Cars 0 - 520 cm'],row['Cars 521 - 660 cm'],row['Cars 661 - 1160 cm'],row['Cars 1160+ cm'],row['AverageSpeed'],row['TotalTraffic'],row['Quality'])
+chunk_size = 100
+total_rows = len(df)
+for start in range(0, total_rows, chunk_size):
+    end = min(start + chunk_size, total_rows)
+    chunk = df.iloc[start:end]
+    for _, row in chunk.iterrows():
+        cursor.execute(operation, row['Highway'], row['Id'], row['Site'], row['Longitude'], row['Latitude'],
+                       row['Direction'], row['DateTime'], row['Cars 0 - 520 cm'], row['Cars 521 - 660 cm'],
+                       row['Cars 661 - 1160 cm'], row['Cars 1160+ cm'], row['AverageSpeed'],
+                       row['TotalTraffic'], row['Quality'])
+    cnxn.commit()
+    print(f"Uploaded rows {start+1} to {end} of {total_rows}")
 
 # Save the data permanently
 cnxn.commit() 
