@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import numpy as np
 
 df = pd.read_csv('traffic_data_full.csv')
 
@@ -28,6 +30,14 @@ abril = [
     '2025-04-07', '2025-04-08', '2025-04-09', '2025-04-10',
     '2025-04-11', '2025-04-12', '2025-04-13'
 ]
+
+monday = ['2025-01-13', '2025-02-10', '2025-03-10', '2025-04-07']
+tuesday = ['2025-01-14', '2025-02-11', '2025-03-11', '2025-04-08']
+wednesday = ['2025-01-15', '2025-02-12', '2025-03-12', '2025-04-09']
+thursday = ['2025-01-16', '2025-02-13', '2025-03-13', '2025-04-10']
+friday = ['2025-01-17', '2025-02-14', '2025-03-14', '2025-04-11']
+saturday = ['2025-01-18', '2025-02-15', '2025-03-15', '2025-04-12']
+sunday = ['2025-01-19', '2025-02-16', '2025-03-16', '2025-04-13']
 
 peak_ranges = [('06:00:00', '08:00:00'), ('15:00:00', '17:00:00')]
 
@@ -112,7 +122,7 @@ def plot_traffic_by_hour_mode(df, site_ids, date, mode, value_col='TotalTraffic'
     filename = f"traffic_mode_{mode}_{'_'.join(site_ids)}_{date}.png"
     plt.savefig(filename)
     plt.close()
-
+       
 def plot_exit_vs_stayed_pie(df, site_ids, date, mode, value_col='TotalTraffic', title=None, filename_prefix="exit_vs_stayed"):
     """
     Plots a pie chart for a single day showing the percentage and total of vehicles that took the exit vs stayed,
@@ -248,11 +258,102 @@ def crearGraficos(df, site_ids, dates, mode):
     plot_weekly_exit_vs_stayed_pie(df, site_ids, dates, mode)
     plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, dates, mode, peak_ranges)
 
+def plot_stayed_exit_by_hour_for_weekdays(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
+    """
+    Plots a line graph with one line per date in `dates`, showing the hourly 'Stayed' and 'Exit' values.
+    Each line is a different day (e.g., each Monday).
+    """
+    plt.figure(figsize=(14, 7))
+    for date in dates:
+        df_day = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)].copy()
+        df_day['TimeInterval'] = pd.to_numeric(df_day['TimeInterval'], errors='coerce')
+        df_day['Hour'] = df_day['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00" if pd.notnull(x) else None)
+        hours = sorted(df_day['Hour'].dropna().unique())
+        stayed_counts = []
+        exit_counts = []
+        for hour in hours:
+            df_hour = df_day[df_day['Hour'] == hour]
+            exit_, stayed, _ = modePoints(df_hour, site_ids, [date], mode, value_col)
+            stayed_counts.append(stayed)
+            exit_counts.append(exit_)
+        plt.plot(hours, stayed_counts, marker='o', label=f'Stayed {date}')
+        plt.plot(hours, exit_counts, marker='x', linestyle='--', label=f'Exit {date}')
+    plt.xlabel('Hour')
+    plt.ylabel('Vehicles')
+    plt.title(f'Hourly Stayed and Exit Vehicles on {weekday_name}s')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(f'stayed_exit_by_hour_{weekday_name}.png')
+    
+def plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
+    """
+    For each date in `dates`, plots 'Stayed' (solid) and 'Exit' (dashed) lines in the same unique color.
+    """
+    plt.figure(figsize=(14, 7))
+    colors = cm.get_cmap('tab10', len(dates))
+    for idx, date in enumerate(dates):
+        df_day = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)].copy()
+        df_day['TimeInterval'] = pd.to_numeric(df_day['TimeInterval'], errors='coerce')
+        df_day['Hour'] = df_day['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00" if pd.notnull(x) else None)
+        hours = sorted(df_day['Hour'].dropna().unique())
+        stayed_counts = []
+        exit_counts = []
+        for hour in hours:
+            df_hour = df_day[df_day['Hour'] == hour]
+            exit_, stayed, _ = modePoints(df_hour, site_ids, [date], mode, value_col)
+            stayed_counts.append(stayed)
+            exit_counts.append(exit_)
+        color = colors(idx)
+        plt.plot(hours, stayed_counts, marker='o', color=color, linestyle='-', label=f'Stayed {date}')
+        plt.plot(hours, exit_counts, marker='x', color=color, linestyle='--', label=f'Exit {date}')
+    plt.xlabel('Hour')
+    plt.ylabel('Vehicles')
+    plt.title(f'Hourly Stayed and Exit Vehicles on {weekday_name}s')
+    plt.legend()
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(f'stayed_exit_by_hour_{weekday_name}.png')
+    plt.show() 
+
+def plot_avg_captation_per_hour(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
+    """
+    Plots a bar graph of the average percentage of vehicles that stay on the M6 Toll per hour,
+    averaged over all dates in the given weekday list.
+    """
+    hour_labels = [f"{h:02d}:00:00" for h in range(24)]
+    percentages_by_hour = {hour: [] for hour in hour_labels}
+
+    for date in dates:
+        df_day = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)].copy()
+        df_day['TimeInterval'] = pd.to_numeric(df_day['TimeInterval'], errors='coerce')
+        df_day['Hour'] = df_day['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00" if pd.notnull(x) else None)
+        for hour in hour_labels:
+            df_hour = df_day[df_day['Hour'] == hour]
+            if not df_hour.empty:
+                exit_, stayed, _ = modePoints(df_hour, site_ids, [date], mode, value_col)
+                total = stayed + exit_
+                if total > 0:
+                    percent = stayed / total * 100
+                    percentages_by_hour[hour].append(percent)
+
+    avg_percentages = [np.mean(percentages_by_hour[hour]) if percentages_by_hour[hour] else 0 for hour in hour_labels]
+
+    plt.figure(figsize=(14, 6))
+    plt.bar(hour_labels, avg_percentages, color='skyblue')
+    plt.xlabel('Hour')
+    plt.ylabel('Average % Stayed on M6 Toll')
+    plt.title(f'Average Hourly Captation (% Stayed) on M6 Toll - {weekday_name}s')
+    plt.xticks(rotation=45)
+    plt.ylim(0, 100)
+    plt.tight_layout()
+    plt.savefig(f'avg_captation_per_hour_{weekday_name}.png')
+
 #crearGraficos(df, ['9238', '9239'], abril, mode=2)
-crearPercentilesStayed(df, ['10464', '10654'], abril, mode=1)
+#crearPercentilesStayed(df, ['10464', '10654'], abril, mode=1)
+
 
 # TODO Graficos lineares comparando todas las semanas por días (Lunes, Martes, etc.) mostrando las tendencias e un mismo grafico 
 # TODO Dentro de esos graficos mirar si se puedehacer un prmedio, y sacar la mediana (P50) para incluirla 
 # TODO Porcentaje de captacion de vehiculo que se quedan en la toll, gráfico de barras
 # TODO Mirar si podemos incluir las barras y las lineares en el mismo grafico 
- 
