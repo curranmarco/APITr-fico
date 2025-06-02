@@ -369,7 +369,14 @@ def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col=
     fig.tight_layout()
     plt.savefig(f'avg_captation_and_stayed_per_hour_{weekday_name}.png')
     plt.show()
-    
+
+plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], monday, mode=1, weekday_name='Monday')
+plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], tuesday, mode=1, weekday_name='Tuesday')
+plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], wednesday, mode=1, weekday_name='Wednesday')
+plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], thursday, mode=1, weekday_name='Thursday')
+plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], friday, mode=1, weekday_name='Friday')
+plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], saturday, mode=1, weekday_name='Saturday')
+plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], sunday, mode=1, weekday_name='Sunday')
 
 #crearGraficos(df, ['9238', '9239'], abril, mode=2)
 #crearPercentilesStayed(df, ['10464', '10654'], abril, mode=1)
