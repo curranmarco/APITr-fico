@@ -316,13 +316,21 @@ def plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode,
     plt.savefig(f'stayed_exit_by_hour_{weekday_name}.png')
     plt.show() 
 
-def plot_avg_captation_per_hour(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
-    """
-    Plots a bar graph of the average percentage of vehicles that stay on the M6 Toll per hour,
-    averaged over all dates in the given weekday list.
-    """
-    hour_labels = [f"{h:02d}:00:00" for h in range(24)]
+def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    # Get all hours present in the data
+    all_hours = set()
+    for date in dates:
+        df_day = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)].copy()
+        df_day['TimeInterval'] = pd.to_numeric(df_day['TimeInterval'], errors='coerce')
+        df_day['Hour'] = df_day['TimeInterval'].apply(lambda x: f"{int(x)//4:02d}:00:00" if pd.notnull(x) else None)
+        all_hours.update(df_day['Hour'].dropna().unique())
+    hour_labels = sorted([h.strip() for h in all_hours])
+
     percentages_by_hour = {hour: [] for hour in hour_labels}
+    stayed_counts_by_hour = {hour: [] for hour in hour_labels}
 
     for date in dates:
         df_day = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)].copy()
@@ -336,22 +344,36 @@ def plot_avg_captation_per_hour(df, site_ids, dates, mode, value_col='TotalTraff
                 if total > 0:
                     percent = stayed / total * 100
                     percentages_by_hour[hour].append(percent)
+                stayed_counts_by_hour[hour].append(stayed)
 
     avg_percentages = [np.mean(percentages_by_hour[hour]) if percentages_by_hour[hour] else 0 for hour in hour_labels]
+    avg_stayed_counts = [np.mean(stayed_counts_by_hour[hour]) if stayed_counts_by_hour[hour] else 0 for hour in hour_labels]
 
-    plt.figure(figsize=(14, 6))
-    plt.bar(hour_labels, avg_percentages, color='skyblue')
-    plt.xlabel('Hour')
-    plt.ylabel('Average % Stayed on M6 Toll')
-    plt.title(f'Average Hourly Captation (% Stayed) on M6 Toll - {weekday_name}s')
-    plt.xticks(rotation=45)
-    plt.ylim(0, 100)
-    plt.tight_layout()
-    plt.savefig(f'avg_captation_per_hour_{weekday_name}.png')
+    fig, ax1 = plt.subplots(figsize=(14, 6))
+
+    bars = ax1.bar(range(len(hour_labels)), avg_percentages, color='skyblue', label='Avg % Stayed')
+    ax1.set_xlabel('Hour')
+    ax1.set_ylabel('Average % Stayed on M6 Toll', color='skyblue')
+    ax1.tick_params(axis='y', labelcolor='skyblue')
+    ax1.set_ylim(0, 100)
+
+    ax2 = ax1.twinx()
+    ax2.plot(range(len(hour_labels)), avg_stayed_counts, color='orange', marker='o', label='Avg # Stayed')
+    ax2.set_ylabel('Average # Vehicles Stayed', color='orange')
+    ax2.tick_params(axis='y', labelcolor='orange')
+
+    ax1.set_xticks(range(len(hour_labels)))
+    ax1.set_xticklabels(hour_labels, rotation=45)
+
+    plt.title(f'Average Hourly Captation (% Stayed) and Stayed Count on M6 Toll - {weekday_name}s')
+    fig.tight_layout()
+    plt.savefig(f'avg_captation_and_stayed_per_hour_{weekday_name}.png')
+    plt.show()
+    
 
 #crearGraficos(df, ['9238', '9239'], abril, mode=2)
 #crearPercentilesStayed(df, ['10464', '10654'], abril, mode=1)
-
+#plot_avg_captation_and_stayed_per_hour(df, ['10464', '10654'], monday, mode=1, weekday_name='Monday')
 
 # TODO Graficos lineares comparando todas las semanas por días (Lunes, Martes, etc.) mostrando las tendencias e un mismo grafico 
 # TODO Dentro de esos graficos mirar si se puedehacer un prmedio, y sacar la mediana (P50) para incluirla 
