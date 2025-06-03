@@ -31,6 +31,14 @@ abril = [
     '2025-04-11', '2025-04-12', '2025-04-13'
 ]
 
+vehicle_size_columns = [
+    'Cars 0 - 520 cm',
+    #'Cars 521 - 660 cm',
+    #'Cars 661 - 1160 cm',
+    #'Cars 1160+ cm'
+]
+
+
 monday = ['2025-01-13', '2025-02-10', '2025-03-10', '2025-04-07']
 tuesday = ['2025-01-14', '2025-02-11', '2025-03-11', '2025-04-08']
 wednesday = ['2025-01-15', '2025-02-12', '2025-03-12', '2025-04-09']
@@ -314,11 +322,8 @@ def plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode,
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(f'stayed_exit_by_hour_{weekday_name}.png')
-    plt.show() 
 
 def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
-    import numpy as np
-    import matplotlib.pyplot as plt
 
     # Get all hours present in the data
     all_hours = set()
@@ -368,19 +373,10 @@ def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col=
     plt.title(f'Average Hourly Captation (% Stayed) and Stayed Count on M6 Toll - {weekday_name}s')
     fig.tight_layout()
     plt.savefig(f'avg_captation_and_stayed_per_hour_{weekday_name}.png')
-    plt.show()
 
-plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], monday, mode=1, weekday_name='Monday')
-plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], tuesday, mode=1, weekday_name='Tuesday')
-plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], wednesday, mode=1, weekday_name='Wednesday')
-plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], thursday, mode=1, weekday_name='Thursday')
-plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], friday, mode=1, weekday_name='Friday')
-plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], saturday, mode=1, weekday_name='Saturday')
-plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['10464', '10654'], sunday, mode=1, weekday_name='Sunday')
+#plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['9242', '9241'], monday, mode=2, weekday_name='Monday')
+#plot_avg_captation_and_stayed_per_hour(df, ['9242', '9241'], monday, mode=2, weekday_name='Monday')
 
-#crearGraficos(df, ['9238', '9239'], abril, mode=2)
-#crearPercentilesStayed(df, ['10464', '10654'], abril, mode=1)
-#plot_avg_captation_and_stayed_per_hour(df, ['10464', '10654'], monday, mode=1, weekday_name='Monday')
 
 # TODO Graficos lineares comparando todas las semanas por días (Lunes, Martes, etc.) mostrando las tendencias e un mismo grafico 
 # TODO Dentro de esos graficos mirar si se puedehacer un prmedio, y sacar la mediana (P50) para incluirla 
