@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
+import streamlit as st
+
 
 df = pd.read_csv('traffic_data_full.csv')
 
@@ -177,19 +179,18 @@ def plot_weekly_exit_vs_stayed_pie(df, site_ids, week_dates, mode, value_col='To
     ]
     colors = ['#FFC107', '#4CAF50']
 
-    plt.figure(figsize=(6, 6))
-    wedges, texts, autotexts = plt.pie(
+    fig, ax = plt.subplots(figsize=(6, 6))
+    wedges, texts, autotexts = ax.pie(
         values, labels=labels, autopct='%1.1f%%', colors=colors,
         startangle=90, wedgeprops=dict(width=0.4)
     )
-    plt.text(0, 0, f'Total:\n{int(total):,}', ha='center', va='center', fontsize=14, fontweight='bold')
+    ax.text(0, 0, f'Total:\n{int(total):,}', ha='center', va='center', fontsize=14, fontweight='bold')
     if not title:
         title = f'Exit vs Stayed\n{week_dates[0]} to {week_dates[-1]}'
-    plt.title(title)
-    filename = f"{filename_prefix}_mode{mode}_{'_'.join(site_ids)}_{week_dates[0]}_{week_dates[-1]}.png"
-    plt.savefig(filename)
-    plt.close()
-
+    ax.set_title(title)
+    plt.tight_layout()
+    return fig
+    
 def filter_peak_hours(df, peak_ranges):
     """Return a DataFrame filtered to only include rows within the given peak hour ranges (inclusive, like .between())."""
     # Variable para almacenar el filtro
@@ -221,18 +222,17 @@ def plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ran
     ]
     colors = ['#FFC107', '#4CAF50']
 
-    plt.figure(figsize=(6, 6))
-    wedges, texts, autotexts = plt.pie(
+    fig, ax = plt.subplots(figsize=(6, 6))
+    wedges, texts, autotexts = ax.pie(
         values, labels=labels, autopct='%1.1f%%', colors=colors,
         startangle=90, wedgeprops=dict(width=0.4)
     )
-    plt.text(0, 0, f'Total:\n{int(total):,}', ha='center', va='center', fontsize=14, fontweight='bold')
+    ax.text(0, 0, f'Total:\n{int(total):,}', ha='center', va='center', fontsize=14, fontweight='bold')
     if not title:
         title = f'Exit vs Stayed (Peak)\n{week_dates[0]} to {week_dates[-1]}'
-    plt.title(title)
-    filename = f"{filename_prefix}_mode{mode}_{'_'.join(site_ids)}_{week_dates[0]}_{week_dates[-1]}.png"
-    plt.savefig(filename)
-    plt.close()
+    ax.set_title(title)
+    plt.tight_layout()
+    return fig
 
 def crearPercentilesStayed(df, site_ids, dates, mode):
     """
@@ -250,7 +250,7 @@ def crearPercentilesStayed(df, site_ids, dates, mode):
           f"50th Percentile: {p50}\n"
           f"75th Percentile: {p75}\n"
           f"95th Percentile: {p95}")
-    
+
 def crearGraficos(df, site_ids, dates, mode):
     """
     Crea todos los graficos necesarios para analizar el trafico de las carreteras.
@@ -297,8 +297,9 @@ def plot_stayed_exit_by_hour_for_weekdays(df, site_ids, dates, mode, value_col='
 def plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
     """
     For each date in `dates`, plots 'Stayed' (solid) and 'Exit' (dashed) lines in the same unique color.
+    Returns the matplotlib figure.
     """
-    plt.figure(figsize=(14, 7))
+    fig, ax = plt.subplots(figsize=(14, 7))
     colors = cm.get_cmap('tab10', len(dates))
     for idx, date in enumerate(dates):
         df_day = df[(df['Id'].isin(site_ids)) & (df['Date'] == date)].copy()
@@ -313,15 +314,16 @@ def plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode,
             stayed_counts.append(stayed)
             exit_counts.append(exit_)
         color = colors(idx)
-        plt.plot(hours, stayed_counts, marker='o', color=color, linestyle='-', label=f'Stayed {date}')
-        plt.plot(hours, exit_counts, marker='x', color=color, linestyle='--', label=f'Exit {date}')
-    plt.xlabel('Hour')
-    plt.ylabel('Vehicles')
-    plt.title(f'Hourly Stayed and Exit Vehicles on {weekday_name}s')
-    plt.legend()
+        ax.plot(hours, stayed_counts, marker='o', color=color, linestyle='-', label=f'Stayed {date}')
+        ax.plot(hours, exit_counts, marker='x', color=color, linestyle='--', label=f'Exit {date}')
+    ax.set_xlabel('Hour')
+    ax.set_ylabel('Vehicles')
+    ax.set_title(f'Hourly Stayed and Exit Vehicles on {weekday_name}s')
+    ax.legend()
     plt.xticks(rotation=45)
     plt.tight_layout()
-    plt.savefig(f'stayed_exit_by_hour_{weekday_name}.png')
+    return fig
+    #plt.savefig(f'stayed_exit_by_hour_{weekday_name}.png')
 
 def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
 
@@ -372,13 +374,68 @@ def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col=
 
     plt.title(f'Average Hourly Captation (% Stayed) and Stayed Count on M6 Toll - {weekday_name}s')
     fig.tight_layout()
-    plt.savefig(f'avg_captation_and_stayed_per_hour_{weekday_name}.png')
+    return fig
+    #plt.savefig(f'avg_captation_and_stayed_per_hour_{weekday_name}.png')
+
 
 #plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['9242', '9241'], monday, mode=2, weekday_name='Monday')
 #plot_avg_captation_and_stayed_per_hour(df, ['9242', '9241'], monday, mode=2, weekday_name='Monday')
 
+# ...existing imports and code...
 
-# TODO Graficos lineares comparando todas las semanas por días (Lunes, Martes, etc.) mostrando las tendencias e un mismo grafico 
-# TODO Dentro de esos graficos mirar si se puedehacer un prmedio, y sacar la mediana (P50) para incluirla 
-# TODO Porcentaje de captacion de vehiculo que se quedan en la toll, gráfico de barras
-# TODO Mirar si podemos incluir las barras y las lineares en el mismo grafico 
+if __name__ == "__main__":
+    st.title("Traffic Dashboard")
+
+    dashboard_mode = st.radio(
+        "Choose dashboard mode",
+        ("By Weekday", "By Week/Month")
+    )
+
+    if dashboard_mode == "By Weekday":
+        # --- Existing weekday dashboard ---
+        weekday_map = {
+            'Monday': monday,
+            'Tuesday': tuesday,
+            'Wednesday': wednesday,
+            'Thursday': thursday,
+            'Friday': friday,
+            'Saturday': saturday,
+            'Sunday': sunday
+        }
+        weekday = st.selectbox("Select a weekday", list(weekday_map.keys()))
+        dates = weekday_map[weekday]
+        site_ids = st.text_input("Enter site IDs (comma separated)", "9242,9241")
+        site_ids = [s.strip() for s in site_ids.split(",")]
+        mode = st.selectbox("Select mode", [1, 2, 3], index=1)
+        st.write(f"Showing data for {weekday}s: {dates}")
+
+        st.subheader("Line Graph: Stayed and Exit by Hour")
+        fig1 = plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode, weekday_name=weekday)
+        st.pyplot(fig1)
+
+        st.subheader("Bar/Line Graph: Average Captation and Stayed per Hour")
+        fig2 = plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, weekday_name=weekday)
+        st.pyplot(fig2)
+
+    else:
+        # --- Weekly/Monthly dashboard ---
+        month_map = {
+            'January': enero,
+            'February': febrero,
+            'March': marzo,
+            'April': abril
+        }
+        month = st.selectbox("Select a month", list(month_map.keys()))
+        week_dates = month_map[month]
+        site_ids = st.text_input("Enter site IDs (comma separated)", "9242,9241", key="month_site_ids")
+        site_ids = [s.strip() for s in site_ids.split(",")]
+        mode = st.selectbox("Select mode", [1, 2, 3], index=1, key="month_mode")
+        st.write(f"Showing data for {month}: {week_dates}")
+
+        st.subheader("Weekly Exit vs Stayed Percentage (Pie Chart)")
+        fig3 = plot_weekly_exit_vs_stayed_pie(df, site_ids, week_dates, mode)
+        st.pyplot(fig3)
+
+        st.subheader("Peak Hour Exit vs Stayed Percentage (Pie Chart)")
+        fig4 = plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ranges)
+        st.pyplot(fig4)
