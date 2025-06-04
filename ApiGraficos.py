@@ -4,6 +4,8 @@ import matplotlib.cm as cm
 import numpy as np
 import streamlit as st
 
+st.set_page_config(layout="wide")
+
 
 df = pd.read_csv('traffic_data_full.csv')
 
@@ -355,6 +357,7 @@ def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col=
 
     avg_percentages = [np.mean(percentages_by_hour[hour]) if percentages_by_hour[hour] else 0 for hour in hour_labels]
     avg_stayed_counts = [np.mean(stayed_counts_by_hour[hour]) if stayed_counts_by_hour[hour] else 0 for hour in hour_labels]
+    median = [np.median(stayed_counts_by_hour[hour]) if stayed_counts_by_hour[hour] else 0 for hour in hour_labels]
 
     fig, ax1 = plt.subplots(figsize=(14, 6))
 
@@ -366,8 +369,14 @@ def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col=
 
     ax2 = ax1.twinx()
     ax2.plot(range(len(hour_labels)), avg_stayed_counts, color='orange', marker='o', label='Avg # Stayed')
-    ax2.set_ylabel('Average # Vehicles Stayed', color='orange')
-    ax2.tick_params(axis='y', labelcolor='orange')
+    ax2.plot(range(len(hour_labels)), median, color='red', linestyle='--', label='Median # Stayed')
+    ax2.set_ylabel('Vehicles Stayed', color='black')
+    ax2.tick_params(axis='y', labelcolor='black')
+    ax2.legend(loc='upper right')
+    
+    
+    
+    
 
     ax1.set_xticks(range(len(hour_labels)))
     ax1.set_xticklabels(hour_labels, rotation=45)
@@ -402,13 +411,19 @@ if __name__ == "__main__":
             'Saturday': saturday,
             'Sunday': sunday
         }
-        weekday = st.selectbox("Select a weekday", list(weekday_map.keys()))
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            weekday = st.selectbox("📅 Select a weekday", list(weekday_map.keys()))
+        with col2:
+            site_ids = st.text_input("Enter site IDs (comma separated)", "9242,9241")
+            site_ids = [s.strip() for s in site_ids.split(",")]
+        with col3:
+            mode = st.selectbox("Select mode", [1, 2, 3], index=1)
+            
         dates = weekday_map[weekday]
-        site_ids = st.text_input("Enter site IDs (comma separated)", "9242,9241")
-        site_ids = [s.strip() for s in site_ids.split(",")]
-        mode = st.selectbox("Select mode", [1, 2, 3], index=1)
         st.write(f"Showing data for {weekday}s: {dates}")
-
+        
         st.subheader("Line Graph: Stayed and Exit by Hour")
         fig1 = plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode, weekday_name=weekday)
         st.pyplot(fig1)
@@ -425,13 +440,19 @@ if __name__ == "__main__":
             'March': marzo,
             'April': abril
         }
-        month = st.selectbox("Select a month", list(month_map.keys()))
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            month = st.selectbox("📅 Select a month", list(month_map.keys()))
+        with col2:
+            site_ids = st.text_input("Enter site IDs (comma separated)", "9242,9241", key="month_site_ids")
+            site_ids = [s.strip() for s in site_ids.split(",")]
+        with col3:
+            mode = st.selectbox("Select mode", [1, 2, 3], index=1, key="month_mode")
+                 
         week_dates = month_map[month]
-        site_ids = st.text_input("Enter site IDs (comma separated)", "9242,9241", key="month_site_ids")
-        site_ids = [s.strip() for s in site_ids.split(",")]
-        mode = st.selectbox("Select mode", [1, 2, 3], index=1, key="month_mode")
         st.write(f"Showing data for {month}: {week_dates}")
-
+        
         st.subheader("Weekly Exit vs Stayed Percentage (Pie Chart)")
         fig3 = plot_weekly_exit_vs_stayed_pie(df, site_ids, week_dates, mode)
         st.pyplot(fig3)
