@@ -424,14 +424,19 @@ if __name__ == "__main__":
         dates = weekday_map[weekday]
         st.write(f"Showing data for {weekday}s: {dates}")
         
-        st.subheader("Line Graph: Stayed and Exit by Hour")
-        fig1 = plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode, weekday_name=weekday)
-        st.pyplot(fig1)
-
-        st.subheader("Bar/Line Graph: Average Captation and Stayed per Hour")
-        fig2 = plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, weekday_name=weekday)
-        st.pyplot(fig2)
-
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            st.subheader("Line Graph: Stayed and Exit by Hour (Same Colors)")
+            fig = plot_stayed_exit_by_hour_for_weekdays_same_colors(df, site_ids, dates, mode, weekday_name=weekday)
+            st.pyplot(fig)
+        with col_g2:
+            st.subheader("Bar/Line Graph: Average Captation and Stayed per Hour")
+            fig2 = plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, weekday_name=weekday)
+            st.pyplot(fig2)
+            
+        
+        
+        
     else:
         # --- Weekly/Monthly dashboard ---
         month_map = {
@@ -453,10 +458,15 @@ if __name__ == "__main__":
         week_dates = month_map[month]
         st.write(f"Showing data for {month}: {week_dates}")
         
-        st.subheader("Weekly Exit vs Stayed Percentage (Pie Chart)")
-        fig3 = plot_weekly_exit_vs_stayed_pie(df, site_ids, week_dates, mode)
-        st.pyplot(fig3)
+        col_g1, col_g2 = st.columns(2)
+        with col_g1:
+            st.subheader("Weekly Exit vs Stayed Percentage (Pie Chart)")
+            fig3 = plot_weekly_exit_vs_stayed_pie(df, site_ids, week_dates, mode)
+            st.pyplot(fig3)
+        with col_g2:
+            st.subheader("Peak Hour Exit vs Stayed Percentage (Pie Chart)")
+            fig4 = plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ranges)
+            st.pyplot(fig4)
+        
 
-        st.subheader("Peak Hour Exit vs Stayed Percentage (Pie Chart)")
-        fig4 = plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ranges)
-        st.pyplot(fig4)
+        

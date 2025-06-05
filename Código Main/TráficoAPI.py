@@ -8,7 +8,7 @@ locations = locations_df.to_dict(orient='records')
 # TODO Terminar lista de locations de la M6 hacia el norte 
 
 StartDate = '01012025'
-EndDate = '30042025'
+EndDate = '31052025'
 PageSize = 12000 # Hay 96 intervalos de 15 minutos en un día, con lo que 12000 intervalos cubren desde el 1 de enero de 2025 hasta el 31 de marzo de 2025
 
 # Función para obtener los datos de tráfico
@@ -187,6 +187,38 @@ cols.remove('DateTime')
 cols.insert(idx + 1, 'DateTime')
 # Reorder DataFrame
 df = df[cols]
+
+
+
+dict_reemplazo = {
+    '10464': 'Stayed SB Calf Heath',
+    '10654': 'Total SB Calf Heath',
+    '9234' : 'Exit SB T6',
+    '9235' : 'Stayed SB T6',
+    '9238' : 'Exit SB T5',
+    '9239' : 'Stayed SB T5',
+    '9250' : 'Exit SB T2',
+    '9249' : 'Stayed SB T2',
+    '9247' : 'Exit NB T3',
+    '9248' : 'Stayed NB T3',
+    '9243': 'Exit NB T4',
+    '9244': 'Stayed NB T4',
+    '9242': 'Exit SB T4',
+    '9241': 'Stayed SB T4',
+    '9237': 'Exit NB T6',
+    '9236': 'Stayed NB T6',
+    '9233': 'Exit NB T7',
+    '9232': 'Stayed NB T7',
+    '9228': 'Exit NB T8',
+    '9229': 'Stayed NB T8'
+}
+
+# Crear una nueva columna 'IdLabel' con los nombres descriptivos, dejando el Id original intacto
+df['IdDescription'] = df['Id'].map(dict_reemplazo).fillna(df['Id'])
+
+
+
+
 
 """
 # Export the dataframe to SQL server
