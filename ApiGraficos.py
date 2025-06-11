@@ -3,11 +3,17 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 import streamlit as st
+import os
+
+# Get the absolute path of the current script file
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# Build the absolute path to the CSV file
+csv_path = os.path.join(script_dir, 'traffic_data_full.csv')
 
 st.set_page_config(layout="wide")
 
 
-df = pd.read_csv('traffic_data_full.csv')
+df = pd.read_csv(csv_path)
 
 df['DateTime'] = pd.to_datetime(df['DateTime'])
 df['Date'] = df['DateTime'].dt.strftime('%Y-%m-%d')
