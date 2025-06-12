@@ -1,11 +1,15 @@
 import pandas as pd
 import requests
 import pyodbc
+import os
 
-locations_df = pd.read_csv('locationsSinComa.csv')
+# Use relative path to find the CSV file in the parent directory
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(script_dir)
+csv_path = os.path.join(parent_dir, 'locationsSinComa.csv')
+
+locations_df = pd.read_csv(csv_path)
 locations = locations_df.to_dict(orient='records')
-
-# TODO Terminar lista de locations de la M6 hacia el norte 
 
 StartDate = '01012025'
 EndDate = '31052025'
@@ -123,8 +127,6 @@ for location in locations:
         #! No hay datos de calidad
         print(f"No quality data found for {location['Site']} with Id {Id}")
 
-
-    #print(traffic_data)
     # Verificar si se obtuvo la respuesta y si contiene datos
     if traffic_data and 'Rows' in traffic_data:
         # Extraer los datos que nos interesan
@@ -192,7 +194,7 @@ df = df[cols]
 
 dict_reemplazo = {
     '10464': 'Stayed SB Calf Heath',
-    '10654': 'Total SB Calf Heath',
+    '10336': 'Exit SB Calf Heath',
     '9234' : 'Exit SB T6',
     '9235' : 'Stayed SB T6',
     '9238' : 'Exit SB T5',
@@ -201,6 +203,8 @@ dict_reemplazo = {
     '9249' : 'Stayed SB T2',
     '9247' : 'Exit NB T3',
     '9248' : 'Stayed NB T3',
+    '9246' : 'Exit SB T3',
+    '9245' : 'Stayed SB T3',
     '9243': 'Exit NB T4',
     '9244': 'Stayed NB T4',
     '9242': 'Exit SB T4',
@@ -216,7 +220,10 @@ dict_reemplazo = {
 }
 
 # Crear una nueva columna 'IdLabel' con los nombres descriptivos, dejando el Id original intacto
-df['IdDescription'] = df['Id'].map(dict_reemplazo).fillna(df['Id'])
+# Asegurar que las claves del diccionario y los valores de Id estén en el mismo formato (string)
+df['Id_str'] = df['Id'].astype(str)
+df['IdDescription'] = df['Id_str'].map(dict_reemplazo).fillna(df['Id'])
+df = df.drop(columns=['Id_str'])  # Eliminar la columna temporal
 
 
 

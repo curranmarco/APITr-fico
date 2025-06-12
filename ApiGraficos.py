@@ -271,8 +271,19 @@ def crearGraficos(df, site_ids, dates, mode):
         plot_traffic_by_hour_mode(df, site_ids, date, mode)
         plot_exit_vs_stayed_pie(df, site_ids, date, mode)
     
-    plot_weekly_exit_vs_stayed_pie(df, site_ids, dates, mode)
-    plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, dates, mode, peak_ranges)
+    # Get the figures returned by these functions
+    fig_weekly = plot_weekly_exit_vs_stayed_pie(df, site_ids, dates, mode)
+    fig_weekly_peak = plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, dates, mode, peak_ranges)
+    
+    # Save the figures
+    fig_weekly.savefig(f"weekly_exit_vs_stayed_mode{mode}_{'_'.join(site_ids)}_{dates[0]}_to_{dates[-1]}.png")
+    fig_weekly_peak.savefig(f"weekly_peak_exit_vs_stayed_mode{mode}_{'_'.join(site_ids)}_{dates[0]}_to_{dates[-1]}.png")
+    
+    # Close the figures to free memory
+    plt.close(fig_weekly)
+    plt.close(fig_weekly_peak)
+    
+crearGraficos(df, ['10336', '10464'], abril, mode=2)
 
 def plot_stayed_exit_by_hour_for_weekdays(df, site_ids, dates, mode, value_col='TotalTraffic', weekday_name='Monday'):
     """
@@ -396,8 +407,7 @@ def plot_avg_captation_and_stayed_per_hour(df, site_ids, dates, mode, value_col=
 #plot_stayed_exit_by_hour_for_weekdays_same_colors(df, ['9242', '9241'], monday, mode=2, weekday_name='Monday')
 #plot_avg_captation_and_stayed_per_hour(df, ['9242', '9241'], monday, mode=2, weekday_name='Monday')
 
-# ...existing imports and code...
-
+"""
 if __name__ == "__main__":
     st.title("Traffic Dashboard")
 
@@ -473,6 +483,7 @@ if __name__ == "__main__":
             st.subheader("Peak Hour Exit vs Stayed Percentage (Pie Chart)")
             fig4 = plot_weekly_exit_vs_stayed_pie_peak(df, site_ids, week_dates, mode, peak_ranges)
             st.pyplot(fig4)
-        
+
+"""     
 
         
