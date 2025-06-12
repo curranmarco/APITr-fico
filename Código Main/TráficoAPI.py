@@ -216,7 +216,11 @@ dict_reemplazo = {
     '9228': 'Exit NB T8',
     '9229': 'Stayed NB T8',
     '9230': 'Stayed SB T8',
-    '9231': 'Exit SB T8'
+    '9231': 'Exit SB T8',
+    '2313': 'Stayed Stoke On Trent',
+    '19221': 'Stayed Stone',
+    '19411': 'Stayed Stafford',
+    '10630': 'Stayed Penkridge'
 }
 
 # Crear una nueva columna 'IdLabel' con los nombres descriptivos, dejando el Id original intacto
