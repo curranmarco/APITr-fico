@@ -41,7 +41,6 @@ locations= [
 ]
 
 
-API_KEY='489bcef15217bda76eb2d1bce48106dc'
 
 
 # Time zones
