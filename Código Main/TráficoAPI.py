@@ -242,10 +242,6 @@ df = df.drop(columns=['Id_str'])  # Eliminar la columna temporal
 
 """
 # Export the dataframe to SQL server
-server = 'operacionesaleatica.database.windows.net' 
-database = 'Nivel_de_servicio' 
-username = 'uk_traffic_user' 
-password = '4l3aTic4!tr4FF1c'
 cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 cursor = cnxn.cursor()
 
