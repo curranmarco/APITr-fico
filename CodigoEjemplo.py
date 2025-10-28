@@ -122,11 +122,7 @@ for loc in locations:
 df=pd.DataFrame(data)
 print(df)
 
-# Export the dataframe to SQL server
-server = 'operacionesaleatica.database.windows.net' 
-database = 'Weather' 
-username = 'weather_db' 
-password = 'W34th3r%4L3' 
+# Export the dataframe to SQL server 
 cnxn = pyodbc.connect('DRIVER={SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+password)
 cursor = cnxn.cursor()
 # SQL Operation
